@@ -37,6 +37,19 @@ public class Board {
         }
         return false;
     }
+    public int[] legalMoves() {
+        int[] legalMovesArray = {9,9,9,9,9,9};
+        int c=0;
+        for(int move=0; move<6; move++) {
+            if(this.isLegal(move)) {
+                legalMovesArray[c]=move;
+                c++; // lol
+            }
+        }
+        int[] legalMoves = new int[c];
+        System.arraycopy(legalMovesArray, 0, legalMoves, 0, c);
+        return legalMoves;
+    }
     public int situation() {
         // check vertical wins
         int player = 1;
