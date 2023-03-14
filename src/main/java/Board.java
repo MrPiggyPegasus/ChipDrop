@@ -63,6 +63,79 @@ public class Board {
             }
             consec=0;
         }
+        // check horizontal wins
+        for(int row=4; row>=0; row--) {
+            for(int column=0; column<6; column++) {
+                if(consec==4) {
+                    if(player==1) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
+                if(player==board[row][column]) {
+                    consec++;
+                } else if(board[row][column]==0) {
+                    consec=0;
+                } else {
+                    player=board[row][column];
+                    consec=1;
+                }
+            }
+            consec=0;
+        }
+        /* check \ facing diagonal wins
+                  \
+                   \
+        */
+        for(int row=0; row<2; row++) {
+            for(int column=0; column<2; column++) {
+                for(int shift=0; shift<4; shift++) {
+                    if(board[row+shift][column+shift]==player) {
+                        consec++;
+                    } else if(board[row+shift][column+shift]==0) {
+                        consec=0;
+                    } else {
+                        player=board[row+shift][column+shift];
+                        consec=1;
+                    }
+                }
+                if(consec==4) {
+                    if(player==1) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
+            consec=0;
+            }
+        }
+        /* check / facing diagonal wins
+                /
+               /
+        */
+        for(int row=4; row>=3; row--) {
+            for(int column=0; column<2; column++) {
+                for(int shift=0; shift<4; shift++) {
+                    if(board[row-shift][column+shift]==player) {
+                        consec++;
+                    } else if(board[row-shift][column+shift]==0) {
+                        consec=0;
+                    } else {
+                        player=board[row-shift][column+shift];
+                        consec=1;
+                    }
+                    if(consec==4) {
+                        if(player==1) {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                    }
+                }
+            }
+        }
+
         if(this.isDraw()) {
             return 0;
         }
