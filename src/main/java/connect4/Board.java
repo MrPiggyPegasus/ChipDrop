@@ -57,10 +57,10 @@ public class Board {
                 return;
             }
         }
-        throw new IllegalMoveException();
+        throw new IllegalMoveException("Move: " + location + " is illegal.");
     }
     public boolean isLegal(int move) {
-        if(move>5 || move<0) {
+        if(move<0 || move > 5) {
             return false;
         }
         for(int i=4; i>=0; i--) {
@@ -70,18 +70,16 @@ public class Board {
         }
         return false;
     }
-    public int[] legalMoves() {
-        int[] legalMovesArray = {9,9,9,9,9,9};
-        int c=0;
-        for(int move=0; move<6; move++) {
-            if(this.isLegal(move)) {
-                legalMovesArray[c]=move;
-                c++; // lol
+    public boolean isWinning(int move, int player) {
+        Board child = new Board(this.board);
+        try {
+            child.drop(move, player);
+            int sit=child.situation();
+            if(sit!=0 && sit!=2) {
+                return true;
             }
-        }
-        int[] legalMoves = new int[c];
-        System.arraycopy(legalMovesArray, 0, legalMoves, 0, c);
-        return legalMoves;
+        } catch (Exception ignore) {}
+        return false;
     }
     public boolean isOver() {
         return this.situation() != 2;
@@ -191,14 +189,7 @@ public class Board {
         return 2;
     }
     public boolean isDraw() {
-        for(int i=0; i<5; i++) {
-            for(int j=0; j<6; j++) {
-                if(board[i][j]==0) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return this.movesPlayed == 30; // if all slots are filled
     }
 }
 class MoveOutOfBoundsException extends Exception {
@@ -212,7 +203,7 @@ class IllegalPlayerArgumentException extends Exception {
     }
 }
 class IllegalMoveException extends Exception {
-    public IllegalMoveException() {
-        super("Move is not legal for that position.");
+    public IllegalMoveException(String msg) {
+        super(msg);
     }
 }
