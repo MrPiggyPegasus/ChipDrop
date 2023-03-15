@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public class Board {
     public int movesPlayed;
     public int[][] board = new int[5][6];
@@ -21,9 +19,28 @@ public class Board {
         }
     }
     public void show() {
-        for(int i=0; i<5; i++) {
-            System.out.println(Arrays.toString(board[i]));
+        System.out.println("| 1  2  3  4  5  6 |");
+        System.out.println("--------------------");
+        for(int row=0; row<5; row++) {
+            System.out.print("| ");
+            for(int col=0; col<6; col++) {
+                if(col!=5) {
+                    switch (this.board[row][col]) {
+                        case (0) -> System.out.print(".  ");
+                        case (1) -> System.out.print("1  ");
+                        case (2) -> System.out.print("2  ");
+                    }
+                } else {
+                    switch (this.board[row][col]) {
+                        case (0) -> System.out.print(". ");
+                        case (1) -> System.out.print("1 ");
+                        case (2) -> System.out.print("2 ");
+                    }
+                }
+            }
+            System.out.println("|");
         }
+        System.out.println("--------------------");
     }
     public void drop(int location, int player) throws Exception {
         if(player!=1 && player!=2) {
