@@ -1,11 +1,22 @@
 import java.util.Arrays;
 
 public class Board {
+    public int movesPlayed;
     public int[][] board = new int[5][6];
     public Board() {
         for(int i=0; i< 5; i++) {
             for(int j=0; j<6; j++) {
                 board[i][j] = 0;
+            }
+        }
+    }
+    public Board(int[][] pos) {
+        for(int row=0; row<5; row++) {
+            for(int col=0; col<6; col++) {
+                if(pos[row][col]!=0) {
+                    this.movesPlayed++;
+                    this.board[row][col]=pos[row][col];
+                }
             }
         }
     }
@@ -49,6 +60,9 @@ public class Board {
         int[] legalMoves = new int[c];
         System.arraycopy(legalMovesArray, 0, legalMoves, 0, c);
         return legalMoves;
+    }
+    public boolean isOver() {
+        return this.situation() != 2;
     }
     public int situation() {
         // check vertical wins
