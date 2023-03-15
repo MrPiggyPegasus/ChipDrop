@@ -1,3 +1,5 @@
+package Connect4;
+
 public class Board {
     public int movesPlayed;
     public int[][] board = new int[5][6];

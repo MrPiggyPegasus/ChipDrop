@@ -1,3 +1,5 @@
+import Connect4.Board;
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -37,6 +39,13 @@ public class Main {
                     } catch (InputMismatchException ignore) {}
                 } while (!board.isLegal(move-1));
                 board.drop(move-1, 2);
+            }
+            if(board.situation()==-1) {
+                System.out.println("Player 1 wins!");
+            } else if(board.situation() == 1) {
+                System.out.println("Player 2 wins!");
+            } else {
+                System.out.println("Draw!");
             }
         }
     }
