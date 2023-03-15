@@ -1,4 +1,4 @@
-package Connect4;
+package connect4;
 
 public class Board {
     public int movesPlayed;
@@ -60,6 +60,9 @@ public class Board {
         throw new IllegalMoveException();
     }
     public boolean isLegal(int move) {
+        if(move>5 || move<0) {
+            return false;
+        }
         for(int i=4; i>=0; i--) {
             if(board[i][move]==0) {
                 return true;
