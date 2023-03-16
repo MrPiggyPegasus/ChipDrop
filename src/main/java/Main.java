@@ -1,7 +1,8 @@
 import connect4.Board;
+import play.Play;
+
 public class Main {
     public static void main(String[] args) throws Exception {
-        Board board = new Board();
-        System.out.println(board.bestMove(1));
+        Play.playInTerminal();
     }
 }

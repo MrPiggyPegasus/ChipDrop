@@ -46,21 +46,18 @@ public class Engine {
             return 9;
         }
         int[] scores = new int[6];
-        int c=0;
         for(int move: pos.legalMoves()) {
             if(pos.isWinning(move, player)) {
                 return move;
             }
             Board childPos = new Board(pos.board);
             childPos.drop(move, player);
-            childPos.show();
-            scores[c] = negamax(childPos, player, -100, 100);
-            c++;
+            scores[move] = negamax(childPos, player, -100, 100);
         }
         int maxIndex=0;
         int maxEval=scores[0];
         for(int i=1; i<6; i++) {
-            if(scores[i]>maxEval) {
+            if(scores[i]>maxEval && pos.isLegal(i)) {
                 maxEval=scores[i];
                 maxIndex=i;
             }

@@ -4,6 +4,7 @@ import engine.Engine;
 
 public class Board {
     public int movesPlayed;
+    public String pgn = "";
     public int[][] board = new int[5][6];
     public Board() {
         for(int i=0; i< 5; i++) {
@@ -56,6 +57,7 @@ public class Board {
         for(int i=4; i>=0; i--) {
             if(board[i][location]==0) {
                 board[i][location] = player;
+                this.pgn += String.valueOf(location);
                 return;
             }
         }
