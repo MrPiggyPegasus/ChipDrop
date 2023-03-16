@@ -1,5 +1,7 @@
 package connect4;
 
+import engine.Engine;
+
 public class Board {
     public int movesPlayed;
     public int[][] board = new int[5][6];
@@ -69,6 +71,19 @@ public class Board {
             }
         }
         return false;
+    }
+    public int[] legalMoves() {
+        int[] legalMoves = new int[6];
+        int c=0;
+        for(int i=0; i<6; i++) {
+            if(this.isLegal(i)) {
+                legalMoves[c] = i;
+                c++;
+            }
+        }
+        int[] returnArray = new int[c];
+        System.arraycopy(legalMoves, 0, returnArray, 0, c);
+        return returnArray;
     }
     public boolean isWinning(int move, int player) {
         Board child = new Board(this.board);
@@ -191,6 +206,15 @@ public class Board {
     public boolean isDraw() {
         return this.movesPlayed == 30; // if all slots are filled
     }
+
+    public int bestMove(int player) throws Exception {
+        int bestMove = Engine.bestMove(this, player);
+        if(bestMove==9) {
+            throw new PositionAlreadyOverException();
+        } else {
+            return bestMove;
+        }
+    }
 }
 class MoveOutOfBoundsException extends Exception {
     public MoveOutOfBoundsException() {
@@ -205,5 +229,10 @@ class IllegalPlayerArgumentException extends Exception {
 class IllegalMoveException extends Exception {
     public IllegalMoveException(String msg) {
         super(msg);
+    }
+}
+class PositionAlreadyOverException extends Exception {
+    public PositionAlreadyOverException() {
+        super("The entered position is already over.");
     }
 }

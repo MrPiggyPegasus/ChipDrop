@@ -3,7 +3,7 @@ package engine;
 import connect4.Board;
 
 public class Engine {
-    public static int negamax(Board pos, int player, int alpha, int beta) throws Exception {
+    public static int negamax(Board pos, int player, int alpha, int beta){
         if(pos.isDraw()) {
             return 0;
         }
@@ -17,11 +17,19 @@ public class Engine {
             beta = max;
             if(alpha>=beta) return beta;
         }
+        int player2;
+
+        if(player==1) {
+            player2=2;
+        } else {
+            player2=1;
+        }
+
         for(int i=0; i<6; i++) {
             try {
                 Board childPos = new Board(pos.board);
-                childPos.drop(i, 2);
-                int score = -negamax(childPos, 2, -beta, -alpha);
+                childPos.drop(i, player2);
+                int score = -negamax(childPos, player2, -beta, -alpha);
                 if (score >= beta) {
                     return score;
                 }
@@ -34,24 +42,26 @@ public class Engine {
     }
 
     public static int bestMove(Board pos, int player) throws Exception {
+        if(pos.isOver()) {
+            return 9;
+        }
         int[] scores = new int[6];
         int c=0;
-        for(int i=0; i<6; i++) {
-            if(pos.isWinning(i, player)) {
-                return i;
+        for(int move: pos.legalMoves()) {
+            if(pos.isWinning(move, player)) {
+                return move;
             }
-            if(pos.isLegal(i)) {
-                Board childPos = new Board(pos.board);
-                childPos.drop(i, player);
-                scores[c] = negamax(childPos, player, -100, 100);
-                c++;
-            }
+            Board childPos = new Board(pos.board);
+            childPos.drop(move, player);
+            childPos.show();
+            scores[c] = negamax(childPos, player, -100, 100);
+            c++;
         }
-        int max=scores[0];
         int maxIndex=0;
-        for(int i=1; i<c; i++) {
-            if(scores[i]>max) {
-                max=scores[i];
+        int maxEval=scores[0];
+        for(int i=1; i<6; i++) {
+            if(scores[i]>maxEval) {
+                maxEval=scores[i];
                 maxIndex=i;
             }
         }
