@@ -1,8 +1,10 @@
 import connect4.Board;
-import play.Play;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        Play.playInTerminal();
+        Board pos = new Board();
+        pos.play(1);
+        pos.play(2);
+        pos.show();
     }
 }

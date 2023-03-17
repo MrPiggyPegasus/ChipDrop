@@ -2,7 +2,7 @@
  * Copyright (c) 2023. "MrPiggyPegasus" Subject to the MIT License, found in "LICENSE.txt"
  */
 
-package Connect4;
+package connect4;
 
 public class Board {
     public int[][] board = new int[6][7];
@@ -35,10 +35,10 @@ public class Board {
     public void show() {
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 7; j++) {
-                if (board[i][j] == -1) {
-                    System.out.print(2 + " ");
-                } else {
-                    System.out.print(board[i][j] + " ");
+                switch(board[i][j]) {
+                    case(0) -> System.out.print(".  ");
+                    case(1) -> System.out.print("1  ");
+                    case(-1)-> System.out.print("2  ");
                 }
             }
             System.out.println();
