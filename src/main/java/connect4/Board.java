@@ -33,22 +33,21 @@ public class Board {
     public String pgn = "";
     public Board() {
         player = 1;
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 7; j++) {
+        for(int i=0; i<6; i++) {
+            for(int j=0; j<7; j++) {
                 board[i][j] = 0;
             }
         }
     }
 
+    public Board(Board parent) {
+        this.player=parent.player;
+        this.pgn = parent.pgn;
+        this.board = parent.board;
+    }
+
     public boolean isLegal(int move) {
-        try {
-            for(int i=5; i>=0; i--) {
-                if(board[i][move]==0) {
-                    return true;
-                }
-            }
-        } catch (ArrayIndexOutOfBoundsException ignore) {}
-        return false;
+        return board[0][move]==0;
     }
 
     public boolean isOver() {
@@ -56,13 +55,14 @@ public class Board {
     }
     public void play(int move) {
         try {
-                for (int i = 5; i >= 0; i--) {
-                    if (board[i][move] == 0) {
-                        board[i][move] = player;
-                        player = -player;
-                        return;
-                    }
+            for (int i = 5; i >= 0; i--) {
+                if (board[i][move] == 0) {
+                    board[i][move] = player;
+                    player = -player;
+                    pgn += String.valueOf(move);
+                    return;
                 }
+            }
             throw new IllegalMoveException(move);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -70,17 +70,29 @@ public class Board {
     }
 
     public void show() {
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 7; j++) {
+        System.out.println("|-------------------|\n|0  1  2  3  4  5  6|");
+        for (int i=0; i<6; i++) {
+            switch(board[i][0]) {
+                case(0) -> System.out.print("|.  ");
+                case(1) -> System.out.print("|1  ");
+                case(-1)-> System.out.print("|2  ");
+            }
+            for (int j=1; j<6; j++) {
                 switch(board[i][j]) {
                     case(0) -> System.out.print(".  ");
                     case(1) -> System.out.print("1  ");
                     case(-1)-> System.out.print("2  ");
                 }
             }
+            switch(board[i][6]) {
+                case(0) -> System.out.print(".|");
+                case(1) -> System.out.print("1|");
+                case(-1)-> System.out.print("2|");
+            }
             System.out.println();
         }
     }
+
     public int situation() {
         /*  Query the situation of the board.
             returns:
@@ -95,8 +107,8 @@ public class Board {
         // checks horizontal lines of 4:
         int consec = 0;
         int player = 1;
-        for(int row = 0; row < 6; row++) {
-            for(int col = 0; col < 7; col++) {
+        for(int row=0; row<6; row++) {
+            for(int col=0; col<7; col++) {
                 if(board[row][col] == 0) {
                     consec = 0;
                 } else if (board[row][col] == player) {
@@ -111,9 +123,9 @@ public class Board {
             }
         }
         // checks vertical lines of 4:
-        player=1;
+        player = 1;
         consec = 0;
-        for(int col = 0; col < 7; col++) {
+        for(int col=0; col<7; col++) {
             for(int row = 0; row < 6; row++) {
                 if(board[row][col] == player) {
                     consec++;
@@ -129,7 +141,7 @@ public class Board {
             }
         }
         // check downwards-right diagonals of 4:
-        player=1;
+        player = 1;
         consec = 0;
         for(int col=0; col<4; col++) {
             for(int row=0; row<3; row++) {
@@ -168,14 +180,42 @@ public class Board {
                 }
             }
         }
+        if (this.isDraw()) {
+            return 0;
+        }
         return 2;
     }
+
+    public boolean isDraw() {
+        return board[0].length==7;
+    }
+
     public void pvp() {
         Play.pvp(this);
     }
+
+    public boolean isWinning(int move) {
+        Board childPos = new Board(this);
+        childPos.play(move);
+        return childPos.situation()==this.player;
+    }
+
+    public int nbMoves() {
+        int counters=0;
+        for(int move=0; move<7; move++) {
+            counters+=this.board[0][move];
+        }
+        return 7-counters;
+    }
+
     public static class IllegalMoveException extends Exception {
         public IllegalMoveException(int move) {
             super(move + " is illegal for the given position.");
+        }
+    }
+    public static class IllegalPgnException extends Exception {
+        public IllegalPgnException(String pgn) {
+            super("PGN `" + pgn + "` is invalid");
         }
     }
 }
