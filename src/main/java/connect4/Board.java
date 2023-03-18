@@ -1,5 +1,22 @@
 /*
- * Copyright (c) 2023. "MrPiggyPegasus" Subject to the MIT License, found in "LICENSE.txt"
+ * Copyright (c) 2023. "MrPiggyPegasus"
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package connect4;
@@ -21,19 +38,33 @@ public class Board {
         }
     }
 
-    public void play(int move) throws IllegalMoveException {
+    public boolean isLegal(int move) {
         try {
-            for (int i = 5; i >= 0; i--) {
-                if (board[i][move] == 0) {
-                    board[i][move] = player;
-                    player = -player;
-                    return;
+            for(int i=5; i>=0; i--) {
+                if(board[i][move]==0) {
+                    return true;
                 }
             }
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException ignore) {}
+        return false;
+    }
+
+    public boolean isOver() {
+        return situation()!=2;
+    }
+    public void play(int move) {
+        try {
+                for (int i = 5; i >= 0; i--) {
+                    if (board[i][move] == 0) {
+                        board[i][move] = player;
+                        player = -player;
+                        return;
+                    }
+                }
             throw new IllegalMoveException(move);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        throw new IllegalMoveException(move);
     }
 
     public void show() {
@@ -48,7 +79,6 @@ public class Board {
             System.out.println();
         }
     }
-
     public int situation() {
         /*  Query the situation of the board.
             returns:
@@ -138,7 +168,7 @@ public class Board {
         }
         return 2;
     }
-    static class IllegalMoveException extends Exception {
+    public static class IllegalMoveException extends Exception {
         public IllegalMoveException(int move) {
             super(move + " is illegal for the given position.");
         }
