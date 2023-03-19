@@ -1,240 +1,249 @@
+/*
+   Copyright (c) 2023. "MrPiggyPegasus"
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+ */
+
 package connect4;
 
 import engine.Engine;
+import play.Play;
 
 public class Board {
-    public int movesPlayed;
+    public int[][] board = new int[6][7];
+    public int player;
+    public static final int PLAYER_1_WON = 1;
+    public static final int PLAYER_2_WON = -1;
+    public static final int DRAW = 0;
+    public static final int ONGOING = 2;
     public String pgn = "";
-    public int[][] board = new int[5][6];
     public Board() {
-        for(int i=0; i< 5; i++) {
-            for(int j=0; j<6; j++) {
+        player = 1;
+        for(int i=0; i<6; i++) {
+            for(int j=0; j<7; j++) {
                 board[i][j] = 0;
             }
         }
     }
-    public Board(int[][] pos) {
-        for(int row=0; row<5; row++) {
-            for(int col=0; col<6; col++) {
-                if(pos[row][col]!=0) {
-                    this.movesPlayed++;
-                    this.board[row][col]=pos[row][col];
-                }
-            }
-        }
-    }
-    public void show() {
-        System.out.println("| 1  2  3  4  5  6 |");
-        System.out.println("--------------------");
-        for(int row=0; row<5; row++) {
-            System.out.print("| ");
-            for(int col=0; col<6; col++) {
-                if(col!=5) {
-                    switch (this.board[row][col]) {
-                        case (0) -> System.out.print(".  ");
-                        case (1) -> System.out.print("1  ");
-                        case (2) -> System.out.print("2  ");
-                    }
-                } else {
-                    switch (this.board[row][col]) {
-                        case (0) -> System.out.print(". ");
-                        case (1) -> System.out.print("1 ");
-                        case (2) -> System.out.print("2 ");
-                    }
-                }
-            }
-            System.out.println("|");
-        }
-        System.out.println("--------------------");
-    }
-    public void drop(int location, int player) throws Exception {
-        if(player!=1 && player!=2) {
-            throw new IllegalPlayerArgumentException();
-        }
-        if(location<0 || location > 5) {
-            throw new MoveOutOfBoundsException();
-        }
-        for(int i=4; i>=0; i--) {
-            if(board[i][location]==0) {
-                board[i][location] = player;
-                this.pgn += String.valueOf(location);
-                return;
-            }
-        }
-        throw new IllegalMoveException("Move: " + location + " is illegal.");
-    }
-    public boolean isLegal(int move) {
-        if(move<0 || move > 5) {
-            return false;
-        }
-        for(int i=4; i>=0; i--) {
-            if(board[i][move]==0) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public int[] legalMoves() {
-        int[] legalMoves = new int[6];
-        int c=0;
-        for(int i=0; i<6; i++) {
-            if(this.isLegal(i)) {
-                legalMoves[c] = i;
-                c++;
-            }
-        }
-        int[] returnArray = new int[c];
-        System.arraycopy(legalMoves, 0, returnArray, 0, c);
-        return returnArray;
-    }
-    public boolean isWinning(int move, int player) {
-        Board child = new Board(this.board);
-        try {
-            child.drop(move, player);
-            int sit=child.situation();
-            if(sit!=0 && sit!=2) {
-                return true;
-            }
-        } catch (Exception ignore) {}
-        return false;
-    }
-    public boolean isOver() {
-        return this.situation() != 2;
-    }
-    public int situation() {
-        // check vertical wins
-        int player = 1;
-        int consec = 0;
-        for(int column=0; column<6; column++) {
-            for(int row=4; row>=0; row--) {
-                if (board[row][column]==0) {
-                    consec=0;
-                    continue;
-                }
-                if(board[row][column]==player) {
-                    consec++;
-                } else {
-                    consec = 1;
-                    player = board[row][column];
-                }
-                if(consec==4) {
-                    if(player==1) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-                }
-            }
-            consec=0;
-        }
-        // check horizontal wins
-        for(int row=4; row>=0; row--) {
-            for(int column=0; column<6; column++) {
-                if(consec==4) {
-                    if(player==1) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-                }
-                if(player==board[row][column]) {
-                    consec++;
-                } else if(board[row][column]==0) {
-                    consec=0;
-                } else {
-                    player=board[row][column];
-                    consec=1;
-                }
-            }
-            consec=0;
-        }
-        /* check \ facing diagonal wins
-                  \
-                   \
-        */
-        for(int row=0; row<2; row++) {
-            for(int column=0; column<2; column++) {
-                for(int shift=0; shift<4; shift++) {
-                    if(board[row+shift][column+shift]==player) {
-                        consec++;
-                    } else if(board[row+shift][column+shift]==0) {
-                        consec=0;
-                    } else {
-                        player=board[row+shift][column+shift];
-                        consec=1;
-                    }
-                }
-                if(consec==4) {
-                    if(player==1) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-                }
-            consec=0;
-            }
-        }
-        /* check / facing diagonal wins
-                /
-               /
-        */
-        for(int row=4; row>=3; row--) {
-            for(int column=0; column<2; column++) {
-                for(int shift=0; shift<4; shift++) {
-                    if(board[row-shift][column+shift]==player) {
-                        consec++;
-                    } else if(board[row-shift][column+shift]==0) {
-                        consec=0;
-                    } else {
-                        player=board[row-shift][column+shift];
-                        consec=1;
-                    }
-                    if(consec==4) {
-                        if(player==1) {
-                            return 1;
-                        } else {
-                            return -1;
-                        }
-                    }
-                }
-            }
-        }
 
-        if(this.isDraw()) {
+    public Board(String pgn) {
+        // initialise vars
+        player = 1;
+        for(int i=0; i<6; i++) {
+            for(int j=0; j<7; j++) {
+                board[i][j] = 0;
+            }
+        }
+        // play out pgn game
+        for(int i=0; i<pgn.length(); i++) {
+            try {
+                play(Character.getNumericValue(pgn.charAt(i)));
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public boolean isLegal(int move) {
+        return board[0][move]==0;
+    }
+
+    public boolean isInPlay() {
+        return situation() == 2;
+    }
+
+    public int bestMove() {
+        if(pgn.length()==0) {
+            return 3;
+        }
+        return Engine.minimax(this, 8, -1000000, 1000000)[1];
+    }
+    public void play(int move) {
+        try {
+            for (int i = 5; i >= 0; i--) {
+                if (board[i][move] == 0) {
+                    board[i][move] = player;
+                    player = -player;
+                    pgn += String.valueOf(move);
+                    return;
+                }
+            }
+            throw new IllegalMoveException(move);
+        } catch (Exception e) {
+            throw new RuntimeException(new IllegalMoveException(move));
+        }
+    }
+
+    public void show() {
+        System.out.println("|-------------------|\n|0  1  2  3  4  5  6|");
+        for (int i=0; i<6; i++) {
+            switch(board[i][0]) {
+                case(0) -> System.out.print("|.  ");
+                case(1) -> System.out.print("|1  ");
+                case(-1)-> System.out.print("|2  ");
+            }
+            for (int j=1; j<6; j++) {
+                switch(board[i][j]) {
+                    case(0) -> System.out.print(".  ");
+                    case(1) -> System.out.print("1  ");
+                    case(-1)-> System.out.print("2  ");
+                }
+            }
+            switch(board[i][6]) {
+                case(0) -> System.out.print(".|");
+                case(1) -> System.out.print("1|");
+                case(-1)-> System.out.print("2|");
+            }
+            System.out.println();
+        }
+    }
+
+    public int situation() {
+        /*  Query the situation of the board.
+            returns:
+                |------------------------------|
+                |1   if player 1 has won       |
+                |-1  if player 2 has won       |
+                |0   if the position is a draw |
+                |2   if the game is ongoing    |
+                |------------------------------|
+         */
+        // checks horizontal lines of 4:
+        int consec = 0;
+        int player = 1;
+        for(int row=0; row<6; row++) {
+            for(int col=0; col<7; col++) {
+                if(board[row][col] == 0) {
+                    consec = 0;
+                } else if (board[row][col] == player) {
+                    consec++;
+                } else {
+                    player = -player;
+                    consec = 1;
+                }
+                if (consec == 4) {
+                    return player;
+                }
+            }
+        }
+        // checks vertical lines of 4:
+        player = 1;
+        consec = 0;
+        for(int col=0; col<7; col++) {
+            for(int row = 0; row < 6; row++) {
+                if(board[row][col] == player) {
+                    consec++;
+                } else if (board[row][col] == 0) {
+                    consec=0;
+                } else {
+                    player = -player;
+                    consec = 1;
+                }
+                if (consec == 4) {
+                    return player;
+                }
+            }
+        }
+        // check downwards-right diagonals of 4:
+        player = 1;
+        for(int col=0; col<4; col++) {
+            for(int row=0; row<3; row++) {
+                consec = 0;
+                for(int shift=0; shift<4; shift++) {
+                    if(board[row+shift][col+shift] == 0) {
+                        consec = 0;
+                    } else if(board[row+shift][col+shift] == player) {
+                        consec++;
+                    } else {
+                        player = -player;
+                        consec = 1;
+                    }
+                    if(consec == 4) {
+                        return player;
+                    }
+                }
+            }
+        }
+        // check downwards-left diagonals of 4:
+        player = 1;
+        for(int col=0; col<4; col++) {
+            for(int row=0; row<3; row++) {
+                consec = 0;
+                for(int shift=3; shift>=0; shift--) {
+                    if(board[row+shift][col+(3-shift)]==0) {
+                        consec = 0;
+                    } else if(board[row+shift][col+(3-shift)] == player) {
+                        consec++;
+                    } else {
+                        consec = 1;
+                        player = -player;
+                    }
+                    if(consec == 4) {
+                        return player;
+                    }
+                }
+            }
+        }
+        if (this.isDraw()) {
             return 0;
         }
         return 2;
     }
+
     public boolean isDraw() {
-        return this.movesPlayed == 30; // if all slots are filled
+        for(int col=0; col<7; col++) {
+            if(board[0][col]==0) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    public int bestMove(int player) throws Exception {
-        int bestMove = Engine.bestMove(this, player);
-        if(bestMove==9) {
-            throw new PositionAlreadyOverException();
-        } else {
-            return bestMove;
+    public void playerVsPlayer() {
+        Play.playerVsPlayer(this);
+    }
+
+    public void playerVsComputer() {
+        Play.playerVsComputer(this);
+    }
+
+    public boolean isWinning(int move) {
+        Board childPos = new Board(pgn);
+        childPos.play(move);
+        return childPos.situation()==this.player;
+    }
+
+    public int nbMoves() {
+        int counters=0;
+        for(int move=0; move<7; move++) {
+            counters+=this.board[0][move];
+        }
+        return 7-counters;
+    }
+
+    public static class IllegalMoveException extends Exception {
+        public IllegalMoveException(int move) {
+            super(move + " is illegal for the given position.");
         }
     }
-}
-class MoveOutOfBoundsException extends Exception {
-    public MoveOutOfBoundsException() {
-        super("Move index out of bounds. Must be between 0 and 5 inclusive.");
-    }
-}
-class IllegalPlayerArgumentException extends Exception {
-    public IllegalPlayerArgumentException() {
-        super("Player value must be either 1 or 2.");
-    }
-}
-class IllegalMoveException extends Exception {
-    public IllegalMoveException(String msg) {
-        super(msg);
-    }
-}
-class PositionAlreadyOverException extends Exception {
-    public PositionAlreadyOverException() {
-        super("The entered position is already over.");
+    public static class IllegalPgnException extends Exception {
+        public IllegalPgnException(String pgn) {
+            super("PGN `" + pgn + "` is invalid");
+        }
     }
 }

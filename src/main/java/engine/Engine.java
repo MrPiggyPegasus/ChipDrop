@@ -1,67 +1,179 @@
+/*
+   Copyright (c) 2023. "MrPiggyPegasus"
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+ */
+
 package engine;
 
 import connect4.Board;
 
 public class Engine {
-    public static int negamax(Board pos, int player, int alpha, int beta){
-        if(pos.isDraw()) {
-            return 0;
+    public static int[] minimax(Board pos, int depth, int alpha, int beta) {
+        int eval = heuristicEval(pos);
+        if(depth==0|| eval==1000 || eval==-1000 || pos.isDraw()) {
+            return new int[]{eval, 9};
         }
-        for(int i=0; i<6; i++) {
-            if(pos.isWinning(i, player)) {
-                return (31 - pos.movesPlayed) / 2;
+        int maxValue;
+        int maxMove = 0;
+        if(pos.player==1) { // maximising player
+            maxValue = -1000;
+            for(int move=0; move<7; move++) {
+                if(pos.isLegal(move)) {
+                    Board childPos = new Board(pos.pgn);
+                    childPos.play(move);
+                    int value = minimax(childPos, depth-1, alpha, beta)[0];
+                    if(value>maxValue) {
+                        maxMove = move;
+                        maxValue = value;
+                    }
+                    if(alpha>maxValue) {
+                        alpha = maxValue;
+                    }
+                    if(value>=beta) {
+                        break;
+                    }
+                }
+            }
+        } else {
+            maxValue = 1000;
+            for(int move=0; move<7; move++) {
+                if(pos.isLegal(move)) {
+                    Board childPos = new Board(pos.pgn);
+                    childPos.play(move);
+                    int value = minimax(childPos, depth-1, alpha, beta)[0];
+                    if(value<maxValue) {
+                        maxMove = move;
+                        maxValue = value;
+                    }
+                    if(beta<maxValue) {
+                        beta=maxValue;
+                    }
+                    if(value<=alpha) {
+                        break;
+                    }
+                }
             }
         }
-        int max = -30;
-        if(beta > max) {
-            beta = max;
-            if(alpha>=beta) return beta;
-        }
-        int player2;
-
-        if(player==1) {
-            player2=2;
-        } else {
-            player2=1;
-        }
-
-        for(int i=0; i<6; i++) {
-            try {
-                Board childPos = new Board(pos.board);
-                childPos.drop(i, player2);
-                int score = -negamax(childPos, player2, -beta, -alpha);
-                if (score >= beta) {
-                    return score;
-                }
-                if (score > alpha) {
-                    alpha = score;
-                }
-            } catch (Exception ignore) {}
-        }
-        return alpha;
+        return new int[]{maxValue, maxMove};
     }
 
-    public static int bestMove(Board pos, int player) throws Exception {
-        if(pos.isOver()) {
-            return 9;
-        }
-        int[] scores = new int[6];
-        for(int move: pos.legalMoves()) {
-            if(pos.isWinning(move, player)) {
-                return move;
+    public static int heuristicEval(Board pos) {
+        // will return heuristic value of a position for minimax
+        // win returns + or -1000 for player 1 or 2
+        // draw returns 0
+        // else will return the net value derived by the following rules:
+        // +-2 points for row/diagonal of 2
+        // +-5 points for row/diagonal of 3
+        int netPoints = 0;
+
+        // checks horizontal lines of 4:
+        int consec = 0;
+        int player = 1;
+        for(int row=0; row<6; row++) {
+            for(int col=0; col<7; col++) {
+                if(pos.board[row][col] == 0) {
+                    consec = 0;
+                } else if (pos.board[row][col] == player) {
+                    consec++;
+                } else {
+                    player = -player;
+                    consec = 1;
+                }
+                if(consec > 1) {
+                    netPoints += consec*player;
+                    if (consec == 4) {
+                        return player*1000;
+                    }
+
+                }
             }
-            Board childPos = new Board(pos.board);
-            childPos.drop(move, player);
-            scores[move] = negamax(childPos, player, -100, 100);
         }
-        int maxIndex=0;
-        int maxEval=scores[0];
-        for(int i=1; i<6; i++) {
-            if(scores[i]>maxEval && pos.isLegal(i)) {
-                maxEval=scores[i];
-                maxIndex=i;
+        // checks vertical lines of 4:
+        player = 1;
+        consec = 0;
+        for(int col=0; col<7; col++) {
+            for(int row = 0; row < 6; row++) {
+                if(pos.board[row][col] == player) {
+                    consec++;
+                } else if (pos.board[row][col] == 0) {
+                    consec=0;
+                } else {
+                    player = -player;
+                    consec = 1;
+                }
+                if(consec > 1) {
+                    netPoints += consec*player;
+                    if (consec == 4) {
+                        return player * 100;
+                    }
+                }
             }
         }
-        return maxIndex;
+        // check downwards-right diagonals of 4:
+        player = 1;
+        consec = 0;
+        for(int col=0; col<4; col++) {
+            for(int row=0; row<3; row++) {
+                for(int shift=0; shift<4; shift++) {
+                    if(pos.board[row+shift][col+shift] == 0) {
+                        consec = 0;
+                    } else if(pos.board[row+shift][col+shift] == player) {
+                        consec++;
+                    } else {
+                        player = -player;
+                        consec = 1;
+                    }
+                    if(consec > 1) {
+                        netPoints += consec*player;
+                        if (consec == 4) {
+                            return player * 1000;
+                        }
+                    }
+                }
+            }
+        }
+        // check downwards-left diagonals of 4:
+        player=1;
+        consec=0;
+        for(int col=0; col<4; col++) {
+            for(int row=0; row<3; row++) {
+                for(int shift=3; shift>=0; shift--) {
+                    if(pos.board[row+shift][col+(3-shift)]==0) {
+                        consec = 0;
+                    } else if(pos.board[row+shift][col+(3-shift)] == player) {
+                        consec++;
+                    } else {
+                        consec = 1;
+                        player = -player;
+                    }
+                    if(consec > 1) {
+                        netPoints += consec*player;
+                        if (consec == 4) {
+                            return player * 1000;
+                        }
+                    }
+                }
+            }
+        }
+        if (pos.isDraw()) {
+            return 0;
+        }
+        return netPoints;
     }
 }

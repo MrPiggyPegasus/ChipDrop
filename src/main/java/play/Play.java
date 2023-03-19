@@ -1,3 +1,24 @@
+/*
+   Copyright (c) 2023. "MrPiggyPegasus"
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+ */
+
 package play;
 
 import connect4.Board;
@@ -6,98 +27,93 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Play {
-    public static void playerTurn(Board board, int player, Scanner s) throws Exception {
-        int move=-1;
-        System.out.println("Enter move for player " + player + ": ");
+    public static Scanner s;
+    public static void playerTurn(Board pos) {
+        pos.show();
+        if(pos.player==1) {
+            System.out.println("Enter move for player 1");
+        } else {
+            System.out.println("Enter move for player 2");
+        }
+        int move=9;
         do {
             try {
                 move = s.nextInt();
+                if (pos.isLegal(move)) {
+                    pos.play(move);
+                    return;
+                }
             } catch (InputMismatchException e) {
                 s.next();
             }
-        } while (!board.isLegal(move-1));
-        board.drop(move-1, player);
+        } while (!pos.isLegal(move));
     }
-    public static void pve() throws Exception {
-        int computerPlayer=-1;
-        Board board = new Board();
-        Scanner s = new Scanner(System.in);
-        System.out.println("Computer as [1] or [2]?");
+
+    public static void computerTurn(Board pos) {
+        int bestMove = pos.bestMove();
+        pos.play(bestMove);
+        System.out.println("Computer's move: " + bestMove);
+    }
+
+    private static void pvc(Board pos, int computerPlayer) {
+        if(computerPlayer==2) {
+            computerPlayer = -1;
+        }
+        if(computerPlayer==pos.player) {
+            do {
+                computerTurn(pos);
+                playerTurn(pos);
+            } while (pos.isInPlay());
+        } else if(computerPlayer==-pos.player) {
+            do {
+                playerTurn(pos);
+                computerTurn(pos);
+            } while(pos.isInPlay());
+        } else {
+            throw new RuntimeException(new InvalidComputerPlayerException(computerPlayer));
+        }
+        System.out.println("\n\n\n");
+        pos.show();
+        switch(pos.situation()) {
+            case(1) -> System.out.println("Player 1 wins!");
+            case(-1)-> System.out.println("Player 2 wins!");
+            case(0) -> System.out.println("Draw!");
+        }
+    }
+
+    public static void playerVsComputer(Board pos) {
+        pvc(pos, pos.player);
+    }
+
+    public static void playerVsComputer(int computerPlayer) {
+        pvc(new Board(), computerPlayer);
+    }
+    private static void pvp(Board pos) {
+        s = new Scanner(System.in);
         do {
-            try {
-                computerPlayer = s.nextInt();
-            } catch (InputMismatchException e) {
-                s.next();
-            }
-        } while(computerPlayer!=1 && computerPlayer!=2);
-        if(computerPlayer==1) {
-            while(true) {
-                int cmove =board.bestMove(2);
-                board.drop(cmove, 1);
-                System.out.println("Computer's move: " + cmove);
-                board.show();
-                if(board.isOver()) {
-                    break;
-                }
-                playerTurn(board, 2, s);
-                if(board.isOver()) {
-                    break;
-                }
-            }
-        } else {
-            board.show();
-            while(true) {
-                playerTurn(board, 1, s);
-                if(board.isOver()) {
-                    break;
-                }
-                int cmove =board.bestMove(2);
-                board.drop(cmove, 2);
-                if (board.isOver()) {
-                    break;
-                }
-                System.out.println("Computer's move: " + cmove);
-                board.show();
-            }
+            playerTurn(pos);
+        } while (pos.isInPlay());
+        System.out.println("\n\n\n");
+        pos.show();
+        switch(pos.situation()) {
+            case(1) -> System.out.println("Player 1 wins!");
+            case(-1)-> System.out.println("Player 2 wins!");
+            case(0) -> System.out.println("Draw!");
         }
-        System.out.println(board.situation());
-        board.show();
-        System.out.println(board.pgn);
+        System.out.println(pos.pgn);
+        System.out.println(pos.situation());
     }
-    public static void pvp() throws Exception {
-        Board board = new Board();
-        Scanner s = new Scanner(System.in);
-        while(true) {
-            playerTurn(board, 1, s);
-            if(board.isOver()) {
-                break;
-            }
-            playerTurn(board, 2, s);
-            if(board.isOver()) {
-                break;
-            }
-        }
-        if(board.situation()==0) {
-            System.out.println("\nDraw!");
-        } else {
-            System.out.println("\n Player " + board.situation() + " wins!");
-        }
+    public static void playerVsPlayer(Board pos) { // user inputs moves for both players
+        pvp(pos);
     }
-    public static void playInTerminal() throws Exception {
-        Scanner s = new Scanner(System.in);
-        int choice=-1;
-        System.out.println("CONNECT 4\n\n[1] - Play\n\n[2] - Play against computer");
-        do {
-            try {
-                choice = s.nextInt();
-            } catch (InputMismatchException e) {
-                s.next();
-            }
-        } while (choice!=1 && choice!=2);
-        if (choice == 1) {
-            pvp();
-        } else {
-            pve();
+
+    public static void playerVsPlayer() { // same but without
+        pvp(new Board());
+    }
+
+    public static class InvalidComputerPlayerException extends Exception {
+        public InvalidComputerPlayerException(int computerPlayer) {
+            super(String.valueOf(computerPlayer));
         }
     }
 }
