@@ -21,6 +21,7 @@
 
 package connect4;
 
+import engine.Engine;
 import play.Play;
 
 public class Board {
@@ -62,8 +63,15 @@ public class Board {
         return board[0][move]==0;
     }
 
-    public boolean isOver() {
-        return situation()!=2;
+    public boolean isInPlay() {
+        return situation() == 2;
+    }
+
+    public int bestMove() {
+        if(pgn.length()==0) {
+            return 3;
+        }
+        return Engine.minimax(this, 8, -1000000, 1000000)[1];
     }
     public void play(int move) {
         try {
@@ -77,7 +85,7 @@ public class Board {
             }
             throw new IllegalMoveException(move);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(new IllegalMoveException(move));
         }
     }
 
@@ -153,9 +161,9 @@ public class Board {
         }
         // check downwards-right diagonals of 4:
         player = 1;
-        consec = 0;
         for(int col=0; col<4; col++) {
             for(int row=0; row<3; row++) {
+                consec = 0;
                 for(int shift=0; shift<4; shift++) {
                     if(board[row+shift][col+shift] == 0) {
                         consec = 0;
@@ -172,10 +180,10 @@ public class Board {
             }
         }
         // check downwards-left diagonals of 4:
-        player=1;
-        consec=0;
+        player = 1;
         for(int col=0; col<4; col++) {
             for(int row=0; row<3; row++) {
+                consec = 0;
                 for(int shift=3; shift>=0; shift--) {
                     if(board[row+shift][col+(3-shift)]==0) {
                         consec = 0;
@@ -206,8 +214,12 @@ public class Board {
         return true;
     }
 
-    public void pvp() {
-        Play.pvp(this);
+    public void playerVsPlayer() {
+        Play.playerVsPlayer(this);
+    }
+
+    public void playerVsComputer() {
+        Play.playerVsComputer(this);
     }
 
     public boolean isWinning(int move) {

@@ -24,10 +24,10 @@ package engine;
 import connect4.Board;
 
 public class Engine {
-    public static int[] minimax(Board pos, int alpha, int beta) {
-        int situation = pos.situation();
-        if(situation!=2) {
-            return new int[]{situation, 9};
+    public static int[] minimax(Board pos, int depth, int alpha, int beta) {
+        int eval = heuristicEval(pos);
+        if(depth==0|| eval==1000 || eval==-1000 || pos.isDraw()) {
+            return new int[]{eval, 9};
         }
         int maxValue;
         int maxMove = 0;
@@ -37,11 +37,11 @@ public class Engine {
                 if(pos.isLegal(move)) {
                     Board childPos = new Board(pos.pgn);
                     childPos.play(move);
-                    int value = minimax(childPos, alpha, beta)[0];
+                    int value = minimax(childPos, depth-1, alpha, beta)[0];
                     if(value>maxValue) {
                         maxMove = move;
                         maxValue = value;
-                    };
+                    }
                     if(alpha>maxValue) {
                         alpha = maxValue;
                     }
@@ -56,7 +56,7 @@ public class Engine {
                 if(pos.isLegal(move)) {
                     Board childPos = new Board(pos.pgn);
                     childPos.play(move);
-                    int value = minimax(childPos, alpha, beta)[0];
+                    int value = minimax(childPos, depth-1, alpha, beta)[0];
                     if(value<maxValue) {
                         maxMove = move;
                         maxValue = value;

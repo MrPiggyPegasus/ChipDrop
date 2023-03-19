@@ -20,20 +20,12 @@
  */
 
 import connect4.Board;
-import engine.Engine;
 
 public class Main {
     public static int counter = 0;
     public static void main(String[] args) {
         // placeholder code to demo win checking with .situation
-        Board pos = new Board();
-        pos.play(1);
-        pos.play(1);
-        pos.play(3);
-        pos.play(0);
-        pos.play(2);
-        pos.play(2);
-        pos.show();
-        System.out.println(Engine.heuristicEval(pos));
+        Board pos = new Board("131211231240102034");
+        pos.playerVsPlayer();
     }
 }
