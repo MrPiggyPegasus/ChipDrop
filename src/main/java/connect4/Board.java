@@ -115,7 +115,6 @@ public class Board {
                 |2   if the game is ongoing    |
                 |------------------------------|
          */
-
         // checks horizontal lines of 4:
         int consec = 0;
         int player = 1;
