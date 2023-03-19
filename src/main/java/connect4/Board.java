@@ -40,10 +40,22 @@ public class Board {
         }
     }
 
-    public Board(Board parent) {
-        this.player=parent.player;
-        this.pgn = parent.pgn;
-        this.board = parent.board;
+    public Board(String pgn) {
+        // initialise vars
+        player = 1;
+        for(int i=0; i<6; i++) {
+            for(int j=0; j<7; j++) {
+                board[i][j] = 0;
+            }
+        }
+        // play out pgn game
+        for(int i=0; i<pgn.length(); i++) {
+            try {
+                play(Character.getNumericValue(pgn.charAt(i)));
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public boolean isLegal(int move) {
@@ -187,7 +199,12 @@ public class Board {
     }
 
     public boolean isDraw() {
-        return board[0].length==7;
+        for(int col=0; col<7; col++) {
+            if(board[0][col]==0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void pvp() {
@@ -195,7 +212,7 @@ public class Board {
     }
 
     public boolean isWinning(int move) {
-        Board childPos = new Board(this);
+        Board childPos = new Board(pgn);
         childPos.play(move);
         return childPos.situation()==this.player;
     }

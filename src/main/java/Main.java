@@ -26,19 +26,12 @@ public class Main {
     public static void main(String[] args) {
         // placeholder code to demo win checking with .situation
         Board pos = new Board();
-        pos.play(3);
-        pos.play(1);
-        pos.play(3);
-        pos.play(1);
+        pos.play(0);
         pos.play(2);
         pos.play(1);
-        pos.play(4);
-        pos.play(0);
-        pos.play(4);
-        pos.play(0);
-        pos.play(5);
-        pos.play(0);
+        Board childPos = new Board(pos.pgn);
+        childPos.play(2);
         pos.show();
-        System.out.println(Engine.negamax(pos, -100, 100));
+        childPos.show();
     }
 }

@@ -24,52 +24,52 @@ package engine;
 import connect4.Board;
 
 public class Engine {
-    public static int negamax(Board pos, int alpha, int beta) {
-        if(pos.isDraw()) {
-            return 0;
+    public static int[] minimax(Board pos, int alpha, int beta) {
+        int situation = pos.situation();
+        if(situation!=2) {
+            return new int[]{situation, 9};
         }
-        for(int x=0; x<7; x++) { // if current player can win next move
-            if(pos.isLegal(x) && pos.isWinning(x)) {
-                return(43-pos.nbMoves())/2;
-            }
-        }
-        int max=(41-pos.nbMoves())/2;
-        if(beta > max) { // prune tree
-            beta=max;
-            if(alpha>=beta) {
-                return beta;
-            }
-        }
-        for(int x=0; x<7; x++) {
-            if(pos.isLegal(x)) {
-                Board p2 = new Board(pos);
-                p2.play(x);
-                int score = -negamax(p2, -beta, -alpha);
-                if(score >= beta) {
-                    return score;
-                }
-                if(score > alpha) {
-                    alpha = score;
-                }
-            }
-        }
-        return alpha;
-    }
-
-    public static int bestMove(Board pos) {
-        int maxEval = -100;
+        int maxValue;
         int maxMove = 0;
-        for(int move=0; move<7; move++) {
-            if(pos.isLegal(move)) {
-                Board childPos = new Board(pos);
-                childPos.play(move);
-                int eval = negamax(childPos, -1000,1000);
-                if(eval>maxEval) {
-                    maxEval = eval;
-                    maxMove = move;
+        if(pos.player==1) { // maximising player
+            maxValue = -1000;
+            for(int move=0; move<7; move++) {
+                if(pos.isLegal(move)) {
+                    Board childPos = new Board(pos.pgn);
+                    childPos.play(move);
+                    int value = minimax(childPos, alpha, beta)[0];
+                    if(value>maxValue) {
+                        maxMove = move;
+                        maxValue = value;
+                    };
+                    if(alpha>maxValue) {
+                        alpha = maxValue;
+                    }
+                    if(value>=beta) {
+                        break;
+                    }
+                }
+            }
+        } else {
+            maxValue = 1000;
+            for(int move=0; move<7; move++) {
+                if(pos.isLegal(move)) {
+                    Board childPos = new Board(pos.pgn);
+                    childPos.play(move);
+                    int value = minimax(childPos, alpha, beta)[0];
+                    if(value<maxValue) {
+                        maxMove = move;
+                        maxValue = value;
+                    }
+                    if(beta<maxValue) {
+                        beta=maxValue;
+                    }
+                    if(value<=alpha) {
+                        break;
+                    }
                 }
             }
         }
-        return maxMove;
+        return new int[]{maxValue, maxMove};
     }
 }
