@@ -26,6 +26,6 @@ public class Main {
     public static void main(String[] args) {
         // placeholder code to demo win checking with .situation
         Board pos = new Board("131211231240102034");
-        pos.playerVsPlayer();
+        pos.playerVsComputer(false);
     }
 }

@@ -68,6 +68,9 @@ public class Board {
     }
 
     public int bestMove() {
+        if(!isInPlay()) {
+            throw new RuntimeException(new PositionAlreadyConcludedException(pgn));
+        }
         if(pgn.length()==0) {
             return 3;
         }
@@ -124,9 +127,10 @@ public class Board {
                 |------------------------------|
          */
         // checks horizontal lines of 4:
-        int consec = 0;
+        int consec;
         int player = 1;
         for(int row=0; row<6; row++) {
+            consec = 0;
             for(int col=0; col<7; col++) {
                 if(board[row][col] == 0) {
                     consec = 0;
@@ -143,8 +147,8 @@ public class Board {
         }
         // checks vertical lines of 4:
         player = 1;
-        consec = 0;
         for(int col=0; col<7; col++) {
+            consec = 0;
             for(int row = 0; row < 6; row++) {
                 if(board[row][col] == player) {
                     consec++;
@@ -222,6 +226,10 @@ public class Board {
         Play.playerVsComputer(this);
     }
 
+    public void playerVsComputer(boolean computersTurn) {
+        Play.playerVsComputer(this, computersTurn);
+    }
+
     public boolean isWinning(int move) {
         Board childPos = new Board(pgn);
         childPos.play(move);
@@ -244,6 +252,12 @@ public class Board {
     public static class IllegalPgnException extends Exception {
         public IllegalPgnException(String pgn) {
             super("PGN `" + pgn + "` is invalid");
+        }
+    }
+
+    public static class PositionAlreadyConcludedException extends Exception {
+        public PositionAlreadyConcludedException(String pgn) {
+            super("The position " + pgn + " cannot be analysed because it is already concluded");
         }
     }
 }

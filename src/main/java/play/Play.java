@@ -27,32 +27,36 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Play {
-    public static Scanner s;
     public static void playerTurn(Board pos) {
-        pos.show();
-        if(pos.player==1) {
-            System.out.println("Enter move for player 1");
-        } else {
-            System.out.println("Enter move for player 2");
-        }
-        int move=9;
-        do {
-            try {
-                move = s.nextInt();
-                if (pos.isLegal(move)) {
-                    pos.play(move);
-                    return;
-                }
-            } catch (InputMismatchException e) {
-                s.next();
+        if(pos.isInPlay()) {
+            Scanner s = new Scanner(System.in);
+            pos.show();
+            if (pos.player == 1) {
+                System.out.println("Enter move for player 1");
+            } else {
+                System.out.println("Enter move for player 2");
             }
-        } while (!pos.isLegal(move));
+            int move = 9;
+            do {
+                try {
+                    move = s.nextInt();
+                    if (pos.isLegal(move)) {
+                        pos.play(move);
+                        return;
+                    }
+                } catch (InputMismatchException e) {
+                    s.next();
+                }
+            } while (!pos.isLegal(move));
+        }
     }
 
     public static void computerTurn(Board pos) {
-        int bestMove = pos.bestMove();
-        pos.play(bestMove);
-        System.out.println("Computer's move: " + bestMove);
+        if(pos.isInPlay()) {
+            int bestMove = pos.bestMove();
+            pos.play(bestMove);
+            System.out.println("Computer's move: " + bestMove);
+        }
     }
 
     private static void pvc(Board pos, int computerPlayer) {
@@ -81,15 +85,23 @@ public class Play {
         }
     }
 
-    public static void playerVsComputer(Board pos) {
+    public static void playerVsComputer(Board pos) {//computer will always play the next move
         pvc(pos, pos.player);
+    }
+
+    public static void playerVsComputer(Board pos, boolean computerTurn) {
+        if(computerTurn) {
+            pvc(pos, pos.player);
+        } else {
+            pvc(pos, -pos.player);
+        }
     }
 
     public static void playerVsComputer(int computerPlayer) {
         pvc(new Board(), computerPlayer);
     }
     private static void pvp(Board pos) {
-        s = new Scanner(System.in);
+        Scanner s = new Scanner(System.in);
         do {
             playerTurn(pos);
         } while (pos.isInPlay());

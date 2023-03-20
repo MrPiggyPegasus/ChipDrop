@@ -83,9 +83,10 @@ public class Engine {
         int netPoints = 0;
 
         // checks horizontal lines of 4:
-        int consec = 0;
+        int consec ;
         int player = 1;
         for(int row=0; row<6; row++) {
+            consec = 0;
             for(int col=0; col<7; col++) {
                 if(pos.board[row][col] == 0) {
                     consec = 0;
@@ -106,8 +107,8 @@ public class Engine {
         }
         // checks vertical lines of 4:
         player = 1;
-        consec = 0;
         for(int col=0; col<7; col++) {
+            consec = 0;
             for(int row = 0; row < 6; row++) {
                 if(pos.board[row][col] == player) {
                     consec++;
@@ -127,9 +128,9 @@ public class Engine {
         }
         // check downwards-right diagonals of 4:
         player = 1;
-        consec = 0;
         for(int col=0; col<4; col++) {
             for(int row=0; row<3; row++) {
+                consec = 0;
                 for(int shift=0; shift<4; shift++) {
                     if(pos.board[row+shift][col+shift] == 0) {
                         consec = 0;
@@ -150,9 +151,9 @@ public class Engine {
         }
         // check downwards-left diagonals of 4:
         player=1;
-        consec=0;
         for(int col=0; col<4; col++) {
             for(int row=0; row<3; row++) {
+                consec=0;
                 for(int shift=3; shift>=0; shift--) {
                     if(pos.board[row+shift][col+(3-shift)]==0) {
                         consec = 0;
