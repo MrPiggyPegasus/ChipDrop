@@ -43,19 +43,19 @@ public class Board {
 
     public Board(String pgn) {
         // initialise vars
-        player = 1;
-        for(int i=0; i<6; i++) {
-            for(int j=0; j<7; j++) {
-                board[i][j] = 0;
+        try {
+            player = 1;
+            for (int i = 0; i < 6; i++) {
+                for (int j = 0; j < 7; j++) {
+                    board[i][j] = 0;
+                }
             }
-        }
-        // play out pgn game
-        for(int i=0; i<pgn.length(); i++) {
-            try {
+            // play out pgn game
+            for (int i = 0; i < pgn.length(); i++) {
                 play(Character.getNumericValue(pgn.charAt(i)));
-            } catch (RuntimeException e) {
-                e.printStackTrace();
             }
+        } catch (RuntimeException e) {
+            throw new RuntimeException(new IllegalPgnException(pgn));
         }
     }
 
@@ -164,21 +164,17 @@ public class Board {
             }
         }
         // check downwards-right diagonals of 4:
-        player = 1;
         for(int col=0; col<4; col++) {
             for(int row=0; row<3; row++) {
-                consec = 0;
+                if(board[row][col]==0) {
+                    continue;
+                }
                 for(int shift=0; shift<4; shift++) {
-                    if(board[row+shift][col+shift] == 0) {
-                        consec = 0;
-                    } else if(board[row+shift][col+shift] == player) {
-                        consec++;
-                    } else {
-                        player = -player;
-                        consec = 1;
+                    if(board[row+shift][col+shift]!=board[row][col]) {
+                        break;
                     }
-                    if(consec == 4) {
-                        return player;
+                    if(shift==3) {
+                        return  board[row][col];
                     }
                 }
             }

@@ -25,9 +25,12 @@ import connect4.Board;
 
 public class Engine {
     public static int[] minimax(Board pos, int depth, int alpha, int beta) {
-        int eval = heuristicEval(pos);
-        if(depth==0|| eval==1000 || eval==-1000 || pos.isDraw()) {
-            return new int[]{eval, 9};
+        int sit = pos.situation();
+        if(pos.situation()!=2) {
+            return new int[]{sit*1000, 9};
+        }
+        if(depth==0) {
+            return new int[]{heuristicEval(pos), 9};
         }
         int maxValue;
         int maxMove = 0;
