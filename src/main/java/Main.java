@@ -24,6 +24,6 @@ import connect4.Board;
 public class Main {
     public static void main(String[] args) {
         Board pos = new Board();
-        pos.playerVsComputer();
+        pos.playerVsComputer(false);
     }
 }

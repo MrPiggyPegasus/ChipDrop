@@ -21,7 +21,6 @@
 
 package connect4;
 
-import engine.Engine;
 import play.Play;
 
 public class Board {
@@ -56,6 +55,13 @@ public class Board {
             }
         } catch (RuntimeException e) {
             throw new RuntimeException(new IllegalPgnException(pgn));
+        }
+    }
+
+    public Board(int[][] pos, int player) {
+        this.player = player;
+        for(int row=0; row<6; row++) {
+            System.arraycopy(pos[row], 0, board[row], 0, 7);
         }
     }
 
