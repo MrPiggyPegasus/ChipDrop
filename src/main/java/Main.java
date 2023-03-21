@@ -19,11 +19,10 @@
    SOFTWARE.
  */
 
-import connect4.Board;
+import nogui.Play;
 
 public class Main {
     public static void main(String[] args) {
-        Board pos = new Board();
-        pos.playerVsComputer(false);
+        Play.menu();
     }
 }

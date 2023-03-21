@@ -21,7 +21,7 @@
 
 package connect4;
 
-import play.Play;
+import nogui.Play;
 
 public class Board {
     public int[][] board = new int[6][7];
@@ -65,6 +65,14 @@ public class Board {
         }
     }
 
+    public static boolean isValidPgn(String pgn) {
+        try {
+            Board temp = new Board(pgn);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
     public boolean isLegal(int move) {
         return board[0][move]==0;
     }
