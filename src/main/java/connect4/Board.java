@@ -26,10 +26,6 @@ import nogui.Play;
 public class Board {
     public int[][] board = new int[6][7];
     public int player;
-    public static final int PLAYER_1_WON = 1;
-    public static final int PLAYER_2_WON = -1;
-    public static final int DRAW = 0;
-    public static final int ONGOING = 2;
     public String pgn = "";
     public Board() {
         player = 1;
@@ -73,6 +69,7 @@ public class Board {
             return false;
         }
     }
+
     public boolean isLegal(int move) {
         return board[0][move]==0;
     }
@@ -90,6 +87,7 @@ public class Board {
         }
         return Engine.minimax(this, 8, -1000000, 1000000)[1];
     }
+
     public void play(int move) {
         try {
             for (int i = 5; i >= 0; i--) {
@@ -232,26 +230,8 @@ public class Board {
         Play.playerVsPlayer(this);
     }
 
-    public void playerVsComputer() {
-        Play.playerVsComputer(this);
-    }
-
     public void playerVsComputer(boolean computersTurn) {
         Play.playerVsComputer(this, computersTurn);
-    }
-
-    public boolean isWinning(int move) {
-        Board childPos = new Board(pgn);
-        childPos.play(move);
-        return childPos.situation()==this.player;
-    }
-
-    public int nbMoves() {
-        int counters=0;
-        for(int move=0; move<7; move++) {
-            counters+=this.board[0][move];
-        }
-        return 7-counters;
     }
 
     public static class IllegalMoveException extends Exception {
@@ -259,6 +239,7 @@ public class Board {
             super(move + " is illegal for the given position.");
         }
     }
+
     public static class IllegalPgnException extends Exception {
         public IllegalPgnException(String pgn) {
             super("PGN `" + pgn + "` is invalid");

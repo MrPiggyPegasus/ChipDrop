@@ -197,10 +197,6 @@ public class Play {
         s.nextInt();
     }
 
-    public static void playerVsComputer(Board pos) {//computer will always play the next move
-        pvc(pos, pos.player);
-    }
-
     public static void playerVsComputer(Board pos, boolean computerTurn) {
         if(computerTurn) {
             pvc(pos, pos.player);
@@ -209,11 +205,7 @@ public class Play {
         }
     }
 
-    public static void playerVsComputer(int computerPlayer) {
-        pvc(new Board(), computerPlayer);
-    }
     private static void pvp(Board pos) {
-        Scanner s = new Scanner(System.in);
         do {
             playerTurn(pos);
         } while (pos.isInPlay());
@@ -225,14 +217,12 @@ public class Play {
             case(0) -> System.out.println("Draw!");
         }
         System.out.println("PGN: " + pos.pgn);
-        System.out.println(pos.situation());
+        Scanner s = new Scanner(System.in);
+        System.out.println("Press enter to return to the menu.");
+        s.nextLine();
     }
-    public static void playerVsPlayer(Board pos) { // user inputs moves for both players
+    public static void playerVsPlayer(Board pos) {
         pvp(pos);
-    }
-
-    public static void playerVsPlayer() { // same but without
-        pvp(new Board());
     }
 
     public static class InvalidComputerPlayerException extends Exception {
