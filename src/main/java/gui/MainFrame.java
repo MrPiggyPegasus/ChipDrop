@@ -19,15 +19,21 @@
    SOFTWARE.
  */
 
-import gui.MainFrame;
-import nogui.Play;
+package gui;
 
-public class Main {
-    public static void main(String[] args) {
-        if(args.length==0) {
-            new MainFrame();
-        } else {
-            Play.menu();
-        }
+import javax.swing.*;
+import java.awt.*;
+
+public class MainFrame extends JFrame {
+    GamePanel gamePanel;
+    public MainFrame() {
+        setLayout(null);
+        setResizable(false);
+        add(new GamePanel());
+        setBackground(Color.WHITE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setSize(760, 600);
+        setVisible(true);
     }
 }

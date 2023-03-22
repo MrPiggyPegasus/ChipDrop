@@ -78,6 +78,14 @@ public class Board {
         return situation() == 2;
     }
 
+    public int highestTokenAtCol(int col) {
+        for (int i=0; i<6; i++) {
+            if (board[i][col] != 0) {
+                return i;
+            }
+        }
+        return 5;
+    }
     public int bestMove() {
         if(!isInPlay()) {
             throw new RuntimeException(new PositionAlreadyConcludedException(pgn));
@@ -90,7 +98,7 @@ public class Board {
 
     public void play(int move) {
         try {
-            for (int i = 5; i >= 0; i--) {
+            for (int i=5; i>=0; i--) {
                 if (board[i][move] == 0) {
                     board[i][move] = player;
                     player = -player;
