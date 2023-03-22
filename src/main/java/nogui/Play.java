@@ -111,7 +111,10 @@ public class Play {
                 pos.playerVsPlayer();
             } else if(choice == 3) {
                 Board pos = new Board(getUserPgn());
+                System.out.println("Computing...");
                 System.out.println("ChipDrop's move: " + pos.bestMove());
+                System.out.println("Press enter to return to the menu.");
+                s.nextLine();
             } else if(choice == 4){
                 try {
                     URI uri = new URI("https://github.com/MrPiggyPegasus/ChipDrop/");
@@ -161,6 +164,7 @@ public class Play {
     }
 
     public static void computerTurn(Board pos) {
+        System.out.println("Calculating...");
         if(pos.isInPlay()) {
             int bestMove = pos.bestMove();
             pos.play(bestMove);
