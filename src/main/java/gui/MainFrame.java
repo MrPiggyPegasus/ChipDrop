@@ -23,17 +23,33 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements WindowFocusListener {
+
+    public static boolean isFocused = true;
     GamePanel gamePanel;
     public MainFrame() {
+        isFocused = true;
         setLayout(null);
         setResizable(false);
-        add(new GamePanel());
+        gamePanel = new GamePanel();
+        add(gamePanel);
         setBackground(Color.WHITE);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setSize(760, 600);
         setVisible(true);
+    }
+
+    @Override
+    public void windowGainedFocus(WindowEvent e) {
+        isFocused = true;
+    }
+
+    @Override
+    public void windowLostFocus(WindowEvent e) {
+        isFocused = false;
     }
 }

@@ -194,7 +194,7 @@ public class Play {
         System.out.println("PGN: " + pos.pgn);
         Scanner s = new Scanner(System.in);
         System.out.println("Press enter to return to the menu.");
-        s.nextInt();
+        s.nextLine();
     }
 
     public static void playerVsComputer(Board pos, boolean computerTurn) {

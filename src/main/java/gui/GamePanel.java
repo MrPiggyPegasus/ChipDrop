@@ -25,74 +25,109 @@ import connect4.Board;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class GamePanel extends JPanel {
-
-    public String pgn = "023631550123";
-
+public class GamePanel extends JPanel implements MouseListener {
+    public Board pos;
     public int bestMove = 3;
-    public JPanel game;
 
     public GamePanel() {
-        game = new JPanel() {
-            public void paint(Graphics gs) {
-                Graphics2D g = (Graphics2D) gs;
-                g.setPaint(Color.GRAY);
-                g.fillRect(20,20,350,300);
-                Board board = new Board(pgn);
-                for (int row = 0; row < 6; row++) { // display counters on the board
-                    for (int col = 0; col < 7; col++) {
-                        if (board.board[row][col] == 0) {
-                            g.setPaint(Color.DARK_GRAY);
-                            g.fillOval(50 * col+20, 50 * row+20, 30, 30);
-                        } else if (board.board[row][col] == 1) {
-                            g.setPaint(Color.RED);
-                            g.fillOval(50 * col+20, 50 * row+20, 30, 30);
-                            g.setPaint(Color.BLACK);
-                            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
-                            g.drawString("1", 50*col+30, 50*row+43);
-                        } else if (board.board[row][col] == -1) {
-                            g.setPaint(Color.YELLOW);
-                            g.fillOval(50 * col+20, 50 * row+20, 30, 30);
-                            g.setPaint(Color.BLACK);
-                            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
-                            g.drawString("2", 50*col+30, 50*row+43);
-                        }
-                    }
-                }
-                if (bestMove != 9) { // bestMove=9 if the best move hasn't been computed yet
-                    if(board.player != 0) {
-                        g.setPaint(Color.GREEN);
-                        g.fillOval(50 * bestMove+20,
-                                   50 * board.highestTokenAtCol(bestMove)+20,
-                                   30,
-                                   30);
-                    }
-                }
-            }
-        };
-        game.setBounds(20,20,360,310);
-        for (int i=0; i<7; i++) {
-            JLabel label = new JLabel();
-            label.setText(String.valueOf(i));
-            label.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
-            label.setForeground(Color.BLACK);
-            label.setBounds(50*i+50, 0, 25,25);
-            add(label);
-        }
-        for (int i=0; i<6; i++) {
-            JLabel label = new JLabel();
-            label.setText(String.valueOf(i));
-            label.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
-            label.setForeground(Color.BLACK);
-            label.setBounds(10, 50*i+40, 25,25);
-            add(label);
-        }
+        addMouseListener(this);
+        pos = new Board();
         setBackground(Color.GRAY);
         setLayout(null);
-        add(game);
         setBounds(0,0,380,330);
         setLocation(0,0);
         setVisible(true);
+    }
+
+    public void playMove(int move) {
+        pos.play(move);
+        bestMove = 9;
+        paint(getGraphics());
+    }
+    @Override
+    public void paint(Graphics gs) {
+        System.out.println("paint");
+        Graphics2D g = (Graphics2D) gs;
+        g.setPaint(Color.GRAY);
+        g.fillRect(0,0,370,320);
+        Board board = new Board(pos.pgn);
+        // display counters on board
+        for (int row = 0; row < 6; row++) {
+            for (int col = 0; col < 7; col++) {
+                if (board.board[row][col] == 0) {
+                    g.setPaint(Color.DARK_GRAY);
+                    g.fillOval(50 * col+20, 50 * row+20, 30, 30);
+                } else if (board.board[row][col] == 1) {
+                    g.setPaint(Color.RED);
+                    g.fillOval(50 * col+20, 50 * row+20, 30, 30);
+                    g.setPaint(Color.BLACK);
+                    g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+                    g.drawString("1", 50*col+30, 50*row+43);
+                } else if (board.board[row][col] == -1) {
+                    g.setPaint(Color.YELLOW);
+                    g.fillOval(50 * col+20, 50 * row+20, 30, 30);
+                    g.setPaint(Color.BLACK);
+                    g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+                    g.drawString("2", 50*col+30, 50*row+43);
+                }
+            }
+        }
+        // highlights the best move in green
+        // bestMove=9 if the best move hasn't been computed yet
+        if(bestMove != 9) {
+            if(board.player != 0) {
+                g.setPaint(Color.GREEN);
+                g.fillOval(50 * bestMove+20,
+                        50 * board.highestTokenAtCol(bestMove)+20,
+                        30,
+                        30);
+                g.setPaint(Color.BLACK);
+                g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+                g.drawString("2", 50*bestMove+30, 50*board.highestTokenAtCol(bestMove)+43);
+            }
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if(pos.isInPlay()) {
+            double x = e.getX();
+            double y = e.getY();
+            if ((x < 20 && y < 20) || (x > 370 && y > 320)) {
+                return;
+            }
+            x += 20;
+            y += 20;
+            System.out.println(x + " " + y);
+            for (int col = 0; col < 7; col++) {
+                if (x < ((col * 50) + 80)) {
+                    playMove(col);
+                    return;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
