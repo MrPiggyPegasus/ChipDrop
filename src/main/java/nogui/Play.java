@@ -114,7 +114,9 @@ public class Play {
                 System.out.println("Computing...");
                 System.out.println("ChipDrop's move: " + pos.bestMove());
                 System.out.println("Press enter to return to the menu.");
-                s.nextLine();
+                try {
+                    s.nextInt();
+                } catch(InputMismatchException ignored) {}
             } else if(choice == 4){
                 try {
                     URI uri = new URI("https://github.com/MrPiggyPegasus/ChipDrop/");
@@ -198,7 +200,9 @@ public class Play {
         System.out.println("PGN: " + pos.pgn);
         Scanner s = new Scanner(System.in);
         System.out.println("Press enter to return to the menu.");
-        s.nextInt();
+        try {
+            s.nextInt();
+        } catch(InputMismatchException ignored) {}
     }
 
     public static void playerVsComputer(Board pos, boolean computerTurn) {
