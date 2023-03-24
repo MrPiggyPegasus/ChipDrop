@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2023. "MrPiggyPegasus"
+   Copyright (c) 2023. "MrPiggyPegasus"
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
@@ -32,13 +32,11 @@ public class GamePanel extends JPanel implements MouseListener {
     public Board pos;
     public int bestMove;
     public boolean gameOver = false;
-
+    public BestMoveSubject sub;
     public GamePanel() {
+        sub = new BestMoveSubject();
         pos = new Board("");
-        System.out.println(pos.bestMove());
-        System.out.println(pos.isLegal(0));
-        BestMoveSubject.subscribe(this);
-        BestMoveSubject.findMove(pos);
+        findBestMove();
         bestMove = 9;
         addMouseListener(this);
         setBackground(Color.GRAY);
@@ -48,20 +46,28 @@ public class GamePanel extends JPanel implements MouseListener {
         setVisible(true);
     }
 
-    public void updateBestMove() {
-        this.bestMove = BestMoveSubject.bestMove;
-        System.out.println("pgn: " + pos.pgn);
-        System.out.println("bestMove: " + bestMove);
+    public void updateBestMove(BestMoveSubject subject) {
+        if(subject!=sub) return;
+        bestMove = sub.bestMove;
         repaint();
+    }
+
+    void findBestMove() {
+        sub.cancel();
+        sub = new BestMoveSubject();
+        sub.subscribe(this);
+        sub.findMove(pos);
     }
 
     void gameOver() {
         gameOver = true;
+        bestMove = 9;
         System.out.println("game over");
+        repaint();
     }
 
     void playMove(int move) {
-        BestMoveSubject.cancel();
+        findBestMove();
         pos.play(move);
         if(!pos.isInPlay()) {
             gameOver();
@@ -69,7 +75,7 @@ public class GamePanel extends JPanel implements MouseListener {
         }
         bestMove = 9;
         repaint();
-        BestMoveSubject.findMove(pos);
+        findBestMove();
     }
     @Override
     public void paint(Graphics gs) {
@@ -116,9 +122,6 @@ public class GamePanel extends JPanel implements MouseListener {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {}
-
-    @Override
     public void mousePressed(MouseEvent e) {
         if(pos.isInPlay()) {
             double x = e.getX();
@@ -135,6 +138,9 @@ public class GamePanel extends JPanel implements MouseListener {
             }
         }
     }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
 
     @Override
     public void mouseReleased(MouseEvent e) {}

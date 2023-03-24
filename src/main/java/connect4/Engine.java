@@ -122,7 +122,7 @@ public class Engine {
                 if(consec > 1) {
                     netPoints += consec*player;
                     if (consec == 4) {
-                        return player * 100;
+                        return player * 1000;
                     }
                 }
             }
