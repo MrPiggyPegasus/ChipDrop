@@ -84,7 +84,7 @@ public class Board {
                 return i;
             }
         }
-        return 5;
+        return 6;
     }
     public int bestMove() {
         if(!isInPlay()) {

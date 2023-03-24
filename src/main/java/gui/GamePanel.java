@@ -30,11 +30,17 @@ import java.awt.event.MouseListener;
 
 public class GamePanel extends JPanel implements MouseListener {
     public Board pos;
-    public int bestMove = 3;
+    public int bestMove;
+    public boolean gameOver = false;
 
     public GamePanel() {
+        pos = new Board("");
+        System.out.println(pos.bestMove());
+        System.out.println(pos.isLegal(0));
+        BestMoveSubject.subscribe(this);
+        BestMoveSubject.findMove(pos);
+        bestMove = 9;
         addMouseListener(this);
-        pos = new Board();
         setBackground(Color.GRAY);
         setLayout(null);
         setBounds(0,0,380,330);
@@ -42,31 +48,47 @@ public class GamePanel extends JPanel implements MouseListener {
         setVisible(true);
     }
 
-    public void playMove(int move) {
+    public void updateBestMove() {
+        this.bestMove = BestMoveSubject.bestMove;
+        System.out.println("pgn: " + pos.pgn);
+        System.out.println("bestMove: " + bestMove);
+        repaint();
+    }
+
+    void gameOver() {
+        gameOver = true;
+        System.out.println("game over");
+    }
+
+    void playMove(int move) {
+        BestMoveSubject.cancel();
         pos.play(move);
+        if(!pos.isInPlay()) {
+            gameOver();
+            return;
+        }
         bestMove = 9;
-        paint(getGraphics());
+        repaint();
+        BestMoveSubject.findMove(pos);
     }
     @Override
     public void paint(Graphics gs) {
-        System.out.println("paint");
         Graphics2D g = (Graphics2D) gs;
         g.setPaint(Color.GRAY);
         g.fillRect(0,0,370,320);
-        Board board = new Board(pos.pgn);
         // display counters on board
         for (int row = 0; row < 6; row++) {
             for (int col = 0; col < 7; col++) {
-                if (board.board[row][col] == 0) {
+                if (pos.board[row][col] == 0) {
                     g.setPaint(Color.DARK_GRAY);
                     g.fillOval(50 * col+20, 50 * row+20, 30, 30);
-                } else if (board.board[row][col] == 1) {
+                } else if (pos.board[row][col] == 1) {
                     g.setPaint(Color.RED);
                     g.fillOval(50 * col+20, 50 * row+20, 30, 30);
                     g.setPaint(Color.BLACK);
                     g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
                     g.drawString("1", 50*col+30, 50*row+43);
-                } else if (board.board[row][col] == -1) {
+                } else if (pos.board[row][col] == -1) {
                     g.setPaint(Color.YELLOW);
                     g.fillOval(50 * col+20, 50 * row+20, 30, 30);
                     g.setPaint(Color.BLACK);
@@ -78,21 +100,26 @@ public class GamePanel extends JPanel implements MouseListener {
         // highlights the best move in green
         // bestMove=9 if the best move hasn't been computed yet
         if(bestMove != 9) {
-            if(board.player != 0) {
-                g.setPaint(Color.GREEN);
-                g.fillOval(50 * bestMove+20,
-                        50 * board.highestTokenAtCol(bestMove)+20,
-                        30,
-                        30);
-                g.setPaint(Color.BLACK);
-                g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
-                g.drawString("2", 50*bestMove+30, 50*board.highestTokenAtCol(bestMove)+43);
+            g.setPaint(Color.GREEN);
+            g.fillOval(50 * bestMove+20,
+                    50 * (pos.highestTokenAtCol(bestMove)-1)+20,
+                    30,
+                    30);
+            g.setPaint(Color.BLACK);
+            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+            if(pos.player == 2) {
+                g.drawString("2", 50 * bestMove + 30, 50 * (pos.highestTokenAtCol(bestMove)-1) + 43);
+            } else {
+                g.drawString("1", 50 * bestMove + 30, 50 * (pos.highestTokenAtCol(bestMove)-1) + 43);
             }
         }
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void mousePressed(MouseEvent e) {
         if(pos.isInPlay()) {
             double x = e.getX();
             double y = e.getY();
@@ -100,8 +127,6 @@ public class GamePanel extends JPanel implements MouseListener {
                 return;
             }
             x += 20;
-            y += 20;
-            System.out.println(x + " " + y);
             for (int col = 0; col < 7; col++) {
                 if (x < ((col * 50) + 80)) {
                     playMove(col);
@@ -112,22 +137,12 @@ public class GamePanel extends JPanel implements MouseListener {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
+    public void mouseReleased(MouseEvent e) {}
 
     @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
+    public void mouseEntered(MouseEvent e) {}
 
     @Override
-    public void mouseEntered(MouseEvent e) {
+    public void mouseExited(MouseEvent e) {}
 
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
 }

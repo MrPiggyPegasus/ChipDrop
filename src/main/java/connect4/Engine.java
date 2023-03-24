@@ -33,7 +33,7 @@ public class Engine {
         int maxValue;
         int maxMove = 0;
         if(pos.player==1) { // maximising player
-            maxValue = -1000;
+            maxValue = -Integer.MAX_VALUE;
             for(int move=0; move<7; move++) {
                 if(pos.isLegal(move)) {
                     Board childPos = new Board(pos.board, pos.player);
@@ -52,7 +52,7 @@ public class Engine {
                 }
             }
         } else {
-            maxValue = 1000;
+            maxValue = Integer.MAX_VALUE;
             for(int move=0; move<7; move++) {
                 if(pos.isLegal(move)) {
                     Board childPos = new Board(pos.board, pos.player);
