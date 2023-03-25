@@ -29,13 +29,16 @@ import java.awt.event.WindowFocusListener;
 public class MainFrame extends JFrame implements WindowFocusListener {
 
     public static boolean isFocused = true;
-    GamePanel gamePanel;
+    public static GamePanel gamePanel;
+    public static SettingsPanel settingsPanel;
     public MainFrame() {
         isFocused = true;
-        setLayout(null);
+        setLayout(new FlowLayout(FlowLayout.LEFT,0,0));
         setResizable(false);
         gamePanel = new GamePanel();
+        settingsPanel = new SettingsPanel(gamePanel);
         add(gamePanel);
+        add(settingsPanel);
         setBackground(Color.WHITE);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

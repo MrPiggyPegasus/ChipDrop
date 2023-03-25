@@ -33,7 +33,8 @@ public class GamePanel extends JPanel implements MouseListener {
     public int bestMove;
     public boolean gameOver = false;
     public BestMoveSubject sub;
-    public GamePanel() {
+
+    public GamePanel() { //TODO: handle game over
         sub = new BestMoveSubject();
         pos = new Board("");
         findBestMove();
@@ -41,7 +42,7 @@ public class GamePanel extends JPanel implements MouseListener {
         addMouseListener(this);
         setBackground(Color.GRAY);
         setLayout(null);
-        setBounds(0,0,380,330);
+        setPreferredSize(new Dimension(370,320));
         setLocation(0,0);
         setVisible(true);
     }
@@ -50,7 +51,7 @@ public class GamePanel extends JPanel implements MouseListener {
         if(subject!=sub) return;
         bestMove = sub.bestMove;
         repaint();
-    }
+}
 
     void findBestMove() {
         sub.cancel();
@@ -69,6 +70,7 @@ public class GamePanel extends JPanel implements MouseListener {
     void playMove(int move) {
         findBestMove();
         pos.play(move);
+        SettingsPanel.updatePGN(pos.pgn);
         if(!pos.isInPlay()) {
             gameOver();
             return;
@@ -77,6 +79,7 @@ public class GamePanel extends JPanel implements MouseListener {
         repaint();
         findBestMove();
     }
+
     @Override
     public void paint(Graphics gs) {
         Graphics2D g = (Graphics2D) gs;
@@ -106,17 +109,24 @@ public class GamePanel extends JPanel implements MouseListener {
         // highlights the best move in green
         // bestMove=9 if the best move hasn't been computed yet
         if(bestMove != 9) {
-            g.setPaint(Color.GREEN);
-            g.fillOval(50 * bestMove+20,
-                    50 * (pos.highestTokenAtCol(bestMove)-1)+20,
-                    30,
-                    30);
-            g.setPaint(Color.BLACK);
-            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
-            if(pos.player == 2) {
-                g.drawString("2", 50 * bestMove + 30, 50 * (pos.highestTokenAtCol(bestMove)-1) + 43);
-            } else {
-                g.drawString("1", 50 * bestMove + 30, 50 * (pos.highestTokenAtCol(bestMove)-1) + 43);
+            if(pos.player == 1 && SettingsPanel.showP1BestMove) {
+                g.setPaint(Color.GREEN);
+                g.fillOval(50 * bestMove + 20,
+                        50 * (pos.highestTokenAtCol(bestMove) - 1) + 20,
+                        30,
+                        30);
+                g.setPaint(Color.BLACK);
+                g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+                g.drawString("1", 50 * bestMove + 30, 50 * (pos.highestTokenAtCol(bestMove) - 1) + 43);
+            } else if(pos.player == -1 && SettingsPanel.showP2BestMove) {
+                g.setPaint(Color.GREEN);
+                g.fillOval(50 * bestMove + 20,
+                        50 * (pos.highestTokenAtCol(bestMove) - 1) + 20,
+                        30,
+                        30);
+                g.setPaint(Color.BLACK);
+                g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+                g.drawString("2", 50 * bestMove + 30, 50 * (pos.highestTokenAtCol(bestMove) - 1) + 43);
             }
         }
     }
@@ -141,13 +151,10 @@ public class GamePanel extends JPanel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {}
-
     @Override
     public void mouseReleased(MouseEvent e) {}
-
     @Override
     public void mouseEntered(MouseEvent e) {}
-
     @Override
     public void mouseExited(MouseEvent e) {}
 
