@@ -72,6 +72,7 @@ public class GamePanel extends JPanel implements MouseListener {
         sub.cancel();
         pos = new Board(pgn);
         findBestMove();
+        repaint();
     }
     void playMove(int move) {
         if(!gameOver) {

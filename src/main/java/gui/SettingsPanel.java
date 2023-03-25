@@ -31,6 +31,7 @@ public class SettingsPanel extends JPanel {
     public static boolean showP1BestMove = false;
     public static GamePanel target;
     public static JTextArea pgnLabel;
+    public static PGNPopup pgnPopup;
     public SettingsPanel(GamePanel gp) {
         target = gp;
         setPreferredSize(new Dimension(370,320));
@@ -46,15 +47,34 @@ public class SettingsPanel extends JPanel {
         pgnLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
         super.update(getGraphics());
 
+        JPanel pgnPanel = new JPanel();
+        pgnPanel.setPreferredSize(new Dimension(100,110));
+        pgnPanel.setBackground(Color.GRAY);
+        pgnPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        pgnPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+
         JScrollPane pgnPane = new JScrollPane(pgnLabel);
         pgnPane.setHorizontalScrollBar(null);
         pgnPane.setPreferredSize(new Dimension(100,80));
-        add(pgnPane);
+        pgnPanel.add(pgnPane);
+
+        JButton pgnButton = new JButton("Set PGN");
+        pgnButton.setFocusable(false);
+        pgnButton.setPreferredSize(new Dimension(100,30));
+        pgnButton.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
+        pgnButton.setBackground(Color.GRAY);
+        pgnButton.addActionListener(e -> pgnPopup = new PGNPopup());
+        pgnPanel.add(pgnButton);
+        add(pgnPanel);
 
         JButton resetButton = new JButton("Reset");
         resetButton.setBackground(Color.GRAY);
         resetButton.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
-        resetButton.addActionListener(SettingsPanel::resetButtonListener);
+        resetButton.addActionListener(e -> {
+            updatePGN("");
+            target.resetToPGN("");
+            target.gameOver = false;});
+
         resetButton.setFocusable(false);
         add(resetButton);
 
@@ -85,11 +105,5 @@ public class SettingsPanel extends JPanel {
 
     public static void updatePGN(String pgn) {
         pgnLabel.setText("PGN: " + pgn);
-    }
-
-    public static void resetButtonListener(AWTEvent e) {
-        updatePGN("");
-        target.resetToPGN("");
-        target.gameOver = false;
     }
 }

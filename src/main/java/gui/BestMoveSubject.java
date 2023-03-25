@@ -30,7 +30,6 @@ public class BestMoveSubject {
     public void findMove(Board pos) {
         findMoveThread = new Thread(() -> {
             bestMove = pos.bestMove();
-            System.out.println("Broadcasting");
             broadcast();
         });
         findMoveThread.start();
