@@ -29,11 +29,11 @@ import java.awt.event.ItemEvent;
 public class SettingsPanel extends JPanel {
     public static boolean showP2BestMove = false;
     public static boolean showP1BestMove = false;
-    public GamePanel target;
+    public static GamePanel target;
     public static JTextArea pgnLabel;
-    public SettingsPanel(GamePanel target) {
-        this.target = target;
-        setPreferredSize(new Dimension(350,320));
+    public SettingsPanel(GamePanel gp) {
+        target = gp;
+        setPreferredSize(new Dimension(370,320));
         setBackground(Color.LIGHT_GRAY);
         setBorder(new BevelBorder(BevelBorder.LOWERED));
         setLayout(new FlowLayout(FlowLayout.LEFT, 20,20));
@@ -43,7 +43,7 @@ public class SettingsPanel extends JPanel {
         pgnLabel.setLineWrap(true);
         pgnLabel.setFocusable(false);
         pgnLabel.setEditable(false);
-        pgnLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 10));
+        pgnLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
         super.update(getGraphics());
 
         JScrollPane pgnPane = new JScrollPane(pgnLabel);
@@ -51,28 +51,45 @@ public class SettingsPanel extends JPanel {
         pgnPane.setPreferredSize(new Dimension(100,80));
         add(pgnPane);
 
+        JButton resetButton = new JButton("Reset");
+        resetButton.setBackground(Color.GRAY);
+        resetButton.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+        resetButton.addActionListener(SettingsPanel::resetButtonListener);
+        resetButton.setFocusable(false);
+        add(resetButton);
+
         JCheckBox p1CheckBox = new JCheckBox("Show best move for player 1");
         p1CheckBox.setBackground(Color.LIGHT_GRAY);
         p1CheckBox.setPreferredSize(new Dimension(300,20));
-        p1CheckBox.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+        p1CheckBox.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
         p1CheckBox.addItemListener(e -> {
             showP1BestMove = e.getStateChange() == ItemEvent.SELECTED;
             MainFrame.gamePanel.repaint();
         });
+        p1CheckBox.setFocusable(false);
+        p1CheckBox.setSelected(true);
         add(p1CheckBox);
 
         JCheckBox p2CheckBox = new JCheckBox("Show best move for player 2");
         p2CheckBox.setBackground(Color.LIGHT_GRAY);
         p2CheckBox.setPreferredSize(new Dimension(300,20));
-        p2CheckBox.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+        p2CheckBox.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
         p2CheckBox.addItemListener(e -> {
             showP2BestMove = e.getStateChange() == ItemEvent.SELECTED;
             MainFrame.gamePanel.repaint();
         });
+        p2CheckBox.setFocusable(false);
+        p2CheckBox.setSelected(true);
         add(p2CheckBox);
     }
 
     public static void updatePGN(String pgn) {
         pgnLabel.setText("PGN: " + pgn);
+    }
+
+    public static void resetButtonListener(AWTEvent e) {
+        updatePGN("");
+        target.resetToPGN("");
+        target.gameOver = false;
     }
 }

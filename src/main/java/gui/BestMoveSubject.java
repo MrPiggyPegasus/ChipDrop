@@ -28,7 +28,6 @@ public class BestMoveSubject {
     public GamePanel observer;
     static Thread findMoveThread;
     public void findMove(Board pos) {
-        // readability 100
         findMoveThread = new Thread(() -> {
             bestMove = pos.bestMove();
             System.out.println("Broadcasting");

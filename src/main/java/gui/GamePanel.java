@@ -51,7 +51,7 @@ public class GamePanel extends JPanel implements MouseListener {
         if(subject!=sub) return;
         bestMove = sub.bestMove;
         repaint();
-}
+    }
 
     void findBestMove() {
         sub.cancel();
@@ -61,23 +61,31 @@ public class GamePanel extends JPanel implements MouseListener {
     }
 
     void gameOver() {
+        sub.cancel();
         gameOver = true;
         bestMove = 9;
         System.out.println("game over");
         repaint();
     }
 
+    void resetToPGN(String pgn) {
+        sub.cancel();
+        pos = new Board(pgn);
+        findBestMove();
+    }
     void playMove(int move) {
-        findBestMove();
-        pos.play(move);
-        SettingsPanel.updatePGN(pos.pgn);
-        if(!pos.isInPlay()) {
-            gameOver();
-            return;
+        if(!gameOver) {
+            findBestMove();
+            pos.play(move);
+            SettingsPanel.updatePGN(pos.pgn);
+            if (!pos.isInPlay()) {
+                gameOver();
+                return;
+            }
+            bestMove = 9;
+            repaint();
+            findBestMove();
         }
-        bestMove = 9;
-        repaint();
-        findBestMove();
     }
 
     @Override
