@@ -34,7 +34,7 @@ public class GamePanel extends JPanel implements MouseListener {
     public boolean gameOver = false;
     public BestMoveSubject sub;
 
-    public GamePanel() { //TODO: handle game over
+    public GamePanel() {
         sub = new BestMoveSubject();
         pos = new Board("");
         findBestMove();
@@ -64,7 +64,6 @@ public class GamePanel extends JPanel implements MouseListener {
         sub.cancel();
         gameOver = true;
         bestMove = 9;
-        System.out.println("game over");
         repaint();
     }
 
@@ -74,6 +73,7 @@ public class GamePanel extends JPanel implements MouseListener {
         findBestMove();
         repaint();
     }
+
     void playMove(int move) {
         if(!gameOver) {
             findBestMove();
@@ -94,9 +94,10 @@ public class GamePanel extends JPanel implements MouseListener {
         Graphics2D g = (Graphics2D) gs;
         g.setPaint(Color.GRAY);
         g.fillRect(0,0,370,320);
-        // display counters on board
-        for (int row = 0; row < 6; row++) {
-            for (int col = 0; col < 7; col++) {
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+        for (int col = 0; col < 7; col++) {
+            // display counters on board
+            for (int row = 0; row < 6; row++) {
                 if (pos.board[row][col] == 0) {
                     g.setPaint(Color.DARK_GRAY);
                     g.fillOval(50 * col+20, 50 * row+20, 30, 30);
@@ -104,16 +105,17 @@ public class GamePanel extends JPanel implements MouseListener {
                     g.setPaint(Color.RED);
                     g.fillOval(50 * col+20, 50 * row+20, 30, 30);
                     g.setPaint(Color.BLACK);
-                    g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
                     g.drawString("1", 50*col+30, 50*row+43);
                 } else if (pos.board[row][col] == -1) {
                     g.setPaint(Color.YELLOW);
                     g.fillOval(50 * col+20, 50 * row+20, 30, 30);
                     g.setPaint(Color.BLACK);
-                    g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
                     g.drawString("2", 50*col+30, 50*row+43);
                 }
             }
+            // mark each column with its index
+            g.setPaint(Color.BLACK);
+            g.drawString(String.valueOf(col), 50 * col+30, 17);
         }
         // highlights the best move in green
         // bestMove=9 if the best move hasn't been computed yet
@@ -166,5 +168,4 @@ public class GamePanel extends JPanel implements MouseListener {
     public void mouseEntered(MouseEvent e) {}
     @Override
     public void mouseExited(MouseEvent e) {}
-
 }

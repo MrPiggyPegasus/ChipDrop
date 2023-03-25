@@ -23,16 +23,12 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
 
-public class MainFrame extends JFrame implements WindowFocusListener {
+public class MainFrame extends JFrame{
 
-    public static boolean isFocused = true;
     public static GamePanel gamePanel;
     public static SettingsPanel settingsPanel;
     public MainFrame() {
-        isFocused = true;
         setLayout(new FlowLayout(FlowLayout.LEFT,0,0));
         setResizable(false);
         gamePanel = new GamePanel();
@@ -43,16 +39,8 @@ public class MainFrame extends JFrame implements WindowFocusListener {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setSize(760, 600);
+        setTitle("ChipDrop");
         setVisible(true);
     }
 
-    @Override
-    public void windowGainedFocus(WindowEvent e) {
-        isFocused = true;
-    }
-
-    @Override
-    public void windowLostFocus(WindowEvent e) {
-        isFocused = false;
-    }
 }

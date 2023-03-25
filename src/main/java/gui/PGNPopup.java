@@ -36,8 +36,9 @@ public class PGNPopup extends JFrame {
             dispose();
             return;
         }
+        setTitle("PGN");
         active = true;
-        setLayout(new FlowLayout(FlowLayout.CENTER, 100,0));
+        setLayout(new FlowLayout(FlowLayout.CENTER, 100,10));
         setSize(250,200);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(MainFrame.gamePanel);
@@ -64,8 +65,19 @@ public class PGNPopup extends JFrame {
                 dispose();
             }
         });
+        submitButton.setFocusable(false);
         add(submitButton);
 
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.setFocusable(false);
+        cancelButton.setBackground(Color.LIGHT_GRAY);
+        cancelButton.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+        cancelButton.setPreferredSize(new Dimension(100,20));
+        cancelButton.addActionListener(e -> {
+            active = false;
+            dispose();
+        });
+        add(cancelButton);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
