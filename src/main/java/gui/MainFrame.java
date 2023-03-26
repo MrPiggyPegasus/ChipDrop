@@ -19,15 +19,28 @@
    SOFTWARE.
  */
 
-import gui.MainFrame;
-import nogui.Play;
+package gui;
 
-public class Main {
-    public static void main(String[] args) {
-        if(args.length==0) {
-            new MainFrame();
-        } else {
-            Play.menu();
-        }
+import javax.swing.*;
+import java.awt.*;
+
+public class MainFrame extends JFrame{
+
+    public static GamePanel gamePanel;
+    public static SettingsPanel settingsPanel;
+    public MainFrame() {
+        setLayout(new FlowLayout(FlowLayout.LEFT,0,0));
+        setResizable(false);
+        gamePanel = new GamePanel();
+        settingsPanel = new SettingsPanel(gamePanel);
+        add(gamePanel);
+        add(settingsPanel);
+        setBackground(Color.WHITE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setSize(760, 350);
+        setTitle("ChipDrop");
+        setVisible(true);
     }
+
 }

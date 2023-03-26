@@ -19,15 +19,37 @@
    SOFTWARE.
  */
 
-import gui.MainFrame;
-import nogui.Play;
+package gui;
 
-public class Main {
-    public static void main(String[] args) {
-        if(args.length==0) {
-            new MainFrame();
-        } else {
-            Play.menu();
-        }
+import connect4.Board;
+import connect4.Engine;
+
+public class BestMoveSubject {
+    public int bestMove;
+    public GamePanel observer;
+    Thread findMoveThread;
+    Board pos;
+    public void findMove() {
+        pos.resetMinimax();
+        findMoveThread = new Thread(() -> {
+            try {
+                bestMove = pos.bestMove();
+                broadcast();
+            } catch (Engine.ProcessTerminatedException ignored) {}
+        });
+        findMoveThread.start();
+        findMoveThread.interrupt();
+    }
+
+    public BestMoveSubject(GamePanel sub, Board pos) {
+        this.pos = pos;
+        observer = sub;
+    }
+    public void cancel() {
+        pos.killMinimax();
+    }
+
+    public void broadcast() {
+        observer.updateBestMove(this);
     }
 }

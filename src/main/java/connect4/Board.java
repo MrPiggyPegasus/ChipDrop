@@ -27,6 +27,7 @@ public class Board {
     public int[][] board = new int[6][7];
     public int player;
     public String pgn = "";
+    public Engine engine;
     public Board() {
         player = 1;
         for(int i=0; i<6; i++) {
@@ -37,6 +38,7 @@ public class Board {
     }
 
     public Board(String pgn) {
+        engine = new Engine();
         // initialise vars
         try {
             player = 1;
@@ -56,6 +58,7 @@ public class Board {
 
     public Board(int[][] pos, int player) {
         this.player = player;
+        engine = new Engine();
         for(int row=0; row<6; row++) {
             System.arraycopy(pos[row], 0, board[row], 0, 7);
         }
@@ -78,19 +81,35 @@ public class Board {
         return situation() == 2;
     }
 
-    public int bestMove() {
+    public int highestTokenAtCol(int col) {
+        for (int i=0; i<6; i++) {
+            if (board[i][col] != 0) {
+                return i;
+            }
+        }
+        return 6;
+    }
+    public int bestMove() throws Engine.ProcessTerminatedException {
         if(!isInPlay()) {
             throw new RuntimeException(new PositionAlreadyConcludedException(pgn));
         }
         if(pgn.length()==0) {
             return 3;
         }
-        return Engine.minimax(this, 8, -1000000, 1000000)[1];
+        return engine.minimax(this, 8, -1000000, 1000000)[1];
+    }
+
+    public void killMinimax() {
+        engine.kill();
+    }
+
+    public void resetMinimax() {
+        engine.resetKillSwitch();
     }
 
     public void play(int move) {
         try {
-            for (int i = 5; i >= 0; i--) {
+            for (int i=5; i>=0; i--) {
                 if (board[i][move] == 0) {
                     board[i][move] = player;
                     player = -player;
