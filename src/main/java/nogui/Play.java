@@ -63,6 +63,7 @@ public class Play {
             do {
                 try {
                     choice = s.nextInt();
+                    s.nextLine();
                 } catch(InputMismatchException e) {
                     s.next();
                 }
@@ -118,7 +119,6 @@ public class Play {
                 } catch (Engine.ProcessTerminatedException ignore) {}
                 System.out.println("Press enter to return to the menu.");
                 s.nextLine();
-
             } else if(choice == 4){
                 try {
                     URI uri = new URI("https://github.com/MrPiggyPegasus/ChipDrop/");
@@ -156,6 +156,7 @@ public class Play {
             do {
                 try {
                     move = s.nextInt();
+                    s.nextLine();
                     if (pos.isLegal(move)) {
                         pos.play(move);
                         return;
