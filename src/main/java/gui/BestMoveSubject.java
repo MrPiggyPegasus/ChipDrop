@@ -22,15 +22,20 @@
 package gui;
 
 import connect4.Board;
+import connect4.Engine;
 
 public class BestMoveSubject {
     public int bestMove;
     public GamePanel observer;
     static Thread findMoveThread;
+    static Board pos;
     public void findMove(Board pos) {
+        BestMoveSubject.pos = pos;
         findMoveThread = new Thread(() -> {
-            bestMove = pos.bestMove();
-            broadcast();
+            try {
+                bestMove = pos.bestMove();
+                broadcast();
+            } catch (Engine.ProcessTerminatedException ignored) {}
         });
         findMoveThread.start();
         findMoveThread.interrupt();

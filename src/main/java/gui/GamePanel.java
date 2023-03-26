@@ -98,19 +98,23 @@ public class GamePanel extends JPanel implements MouseListener {
         for (int col = 0; col < 7; col++) {
             // display counters on board
             for (int row = 0; row < 6; row++) {
-                if (pos.board[row][col] == 0) {
-                    g.setPaint(Color.DARK_GRAY);
-                    g.fillOval(50 * col+20, 50 * row+20, 30, 30);
-                } else if (pos.board[row][col] == 1) {
-                    g.setPaint(Color.RED);
-                    g.fillOval(50 * col+20, 50 * row+20, 30, 30);
-                    g.setPaint(Color.BLACK);
-                    g.drawString("1", 50*col+30, 50*row+43);
-                } else if (pos.board[row][col] == -1) {
-                    g.setPaint(Color.YELLOW);
-                    g.fillOval(50 * col+20, 50 * row+20, 30, 30);
-                    g.setPaint(Color.BLACK);
-                    g.drawString("2", 50*col+30, 50*row+43);
+                switch (pos.board[row][col]) {
+                    case 0 -> {
+                        g.setPaint(Color.DARK_GRAY);
+                        g.fillOval(50 * col + 20, 50 * row + 20, 30, 30);
+                    }
+                    case 1 -> {
+                        g.setPaint(Color.RED);
+                        g.fillOval(50 * col + 20, 50 * row + 20, 30, 30);
+                        g.setPaint(Color.BLACK);
+                        g.drawString("1", 50 * col + 30, 50 * row + 43);
+                    }
+                    case -1 -> {
+                        g.setPaint(Color.YELLOW);
+                        g.fillOval(50 * col + 20, 50 * row + 20, 30, 30);
+                        g.setPaint(Color.BLACK);
+                        g.drawString("2", 50 * col + 30, 50 * row + 43);
+                    }
                 }
             }
             // mark each column with its index
@@ -144,6 +148,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
+        // checks if the mouse is over a column
         if(pos.isInPlay()) {
             double x = e.getX();
             double y = e.getY();
@@ -152,7 +157,7 @@ public class GamePanel extends JPanel implements MouseListener {
             }
             x += 20;
             for (int col = 0; col < 7; col++) {
-                if (x < ((col * 50) + 80)) {
+                if (x < ((col * 50) + 80) && pos.isLegal(col)) {
                     playMove(col);
                     return;
                 }

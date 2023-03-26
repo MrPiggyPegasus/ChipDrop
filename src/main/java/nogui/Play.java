@@ -22,6 +22,7 @@
 package nogui;
 
 import connect4.Board;
+import connect4.Engine;
 
 import java.awt.*;
 import java.net.URI;
@@ -111,7 +112,9 @@ public class Play {
                 pos.playerVsPlayer();
             } else if(choice == 3) {
                 Board pos = new Board(getUserPgn());
-                System.out.println("ChipDrop's move: " + pos.bestMove());
+                try {
+                    System.out.println("ChipDrop's move: " + pos.bestMove());
+                } catch (Engine.ProcessTerminatedException ignore) {}
             } else if(choice == 4){
                 try {
                     URI uri = new URI("https://github.com/MrPiggyPegasus/ChipDrop/");
@@ -162,9 +165,11 @@ public class Play {
 
     public static void computerTurn(Board pos) {
         if(pos.isInPlay()) {
-            int bestMove = pos.bestMove();
-            pos.play(bestMove);
-            System.out.println("Computer's move: " + bestMove);
+            try {
+                int bestMove = pos.bestMove();
+                pos.play(bestMove);
+                System.out.println("Computer's move: " + bestMove);
+            } catch (Engine.ProcessTerminatedException ignored) {}
         }
     }
 

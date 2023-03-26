@@ -22,50 +22,62 @@
 package connect4;
 
 public class Engine {
-    public static int[] minimax(Board pos, int depth, int alpha, int beta) {
+    public boolean killSwitch = false;
+
+    public void kill() { // terminates the process immediately by throwing ProcessTerminatedException
+        killSwitch = true;
+    }
+
+    public void resetKillSwitch() { // required after termination to allow for minimax to restart
+        killSwitch = false;
+    }
+    public int[] minimax(Board pos, int depth, int alpha, int beta) throws ProcessTerminatedException {
         int sit = pos.situation();
-        if(pos.situation()!=2) {
+        if (pos.situation()!=2)
             return new int[]{sit*1000, 9};
+
+        if (killSwitch) {
+            throw new ProcessTerminatedException();
         }
-        if(depth==0) {
+        if (depth==0) {
             return new int[]{heuristicEval(pos), 9};
         }
         int maxValue;
         int maxMove = 0;
-        if(pos.player==1) { // maximising player
+        if (pos.player==1) { // maximising player
             maxValue = -Integer.MAX_VALUE;
-            for(int move=0; move<7; move++) {
-                if(pos.isLegal(move)) {
+            for (int move=0; move<7; move++) {
+                if (pos.isLegal(move)) {
                     Board childPos = new Board(pos.board, pos.player);
                     childPos.play(move);
                     int value = minimax(childPos, depth-1, alpha, beta)[0];
-                    if(value>maxValue) {
+                    if (value>maxValue) {
                         maxMove = move;
                         maxValue = value;
                     }
-                    if(alpha>maxValue) {
+                    if (alpha>maxValue) {
                         alpha = maxValue;
                     }
-                    if(value>=beta) {
+                    if (value>=beta) {
                         break;
                     }
                 }
             }
         } else {
             maxValue = Integer.MAX_VALUE;
-            for(int move=0; move<7; move++) {
-                if(pos.isLegal(move)) {
+            for (int move=0; move<7; move++) {
+                if (pos.isLegal(move)) {
                     Board childPos = new Board(pos.board, pos.player);
                     childPos.play(move);
                     int value = minimax(childPos, depth-1, alpha, beta)[0];
-                    if(value<maxValue) {
+                    if (value<maxValue) {
                         maxMove = move;
                         maxValue = value;
                     }
-                    if(beta<maxValue) {
+                    if (beta<maxValue) {
                         beta=maxValue;
                     }
-                    if(value<=alpha) {
+                    if (value<=alpha) {
                         break;
                     }
                 }
@@ -86,10 +98,10 @@ public class Engine {
         // checks horizontal lines of 4:
         int consec ;
         int player = 1;
-        for(int row=0; row<6; row++) {
+        for (int row=0; row<6; row++) {
             consec = 0;
-            for(int col=0; col<7; col++) {
-                if(pos.board[row][col] == 0) {
+            for (int col=0; col<7; col++) {
+                if (pos.board[row][col] == 0) {
                     consec = 0;
                 } else if (pos.board[row][col] == player) {
                     consec++;
@@ -97,7 +109,7 @@ public class Engine {
                     player = -player;
                     consec = 1;
                 }
-                if(consec > 1) {
+                if (consec > 1) {
                     netPoints += consec*player;
                     if (consec == 4) {
                         return player*1000;
@@ -108,9 +120,9 @@ public class Engine {
         }
         // checks vertical lines of 4:
         player = 1;
-        for(int col=0; col<7; col++) {
+        for (int col=0; col<7; col++) {
             consec = 0;
-            for(int row = 0; row < 6; row++) {
+            for (int row = 0; row < 6; row++) {
                 if(pos.board[row][col] == player) {
                     consec++;
                 } else if (pos.board[row][col] == 0) {
@@ -119,7 +131,7 @@ public class Engine {
                     player = -player;
                     consec = 1;
                 }
-                if(consec > 1) {
+                if (consec > 1) {
                     netPoints += consec*player;
                     if (consec == 4) {
                         return player * 1000;
@@ -129,11 +141,11 @@ public class Engine {
         }
         // check downwards-right diagonals of 4:
         player = 1;
-        for(int col=0; col<4; col++) {
-            for(int row=0; row<3; row++) {
+        for (int col=0; col<4; col++) {
+            for (int row=0; row<3; row++) {
                 consec = 0;
-                for(int shift=0; shift<4; shift++) {
-                    if(pos.board[row+shift][col+shift] == 0) {
+                for (int shift=0; shift<4; shift++) {
+                    if (pos.board[row+shift][col+shift] == 0) {
                         consec = 0;
                     } else if(pos.board[row+shift][col+shift] == player) {
                         consec++;
@@ -141,7 +153,7 @@ public class Engine {
                         player = -player;
                         consec = 1;
                     }
-                    if(consec > 1) {
+                    if (consec > 1) {
                         netPoints += consec*player;
                         if (consec == 4) {
                             return player * 1000;
@@ -152,13 +164,13 @@ public class Engine {
         }
         // check downwards-left diagonals of 4:
         player=1;
-        for(int col=0; col<4; col++) {
-            for(int row=0; row<3; row++) {
+        for (int col=0; col<4; col++) {
+            for (int row=0; row<3; row++) {
                 consec=0;
-                for(int shift=3; shift>=0; shift--) {
-                    if(pos.board[row+shift][col+(3-shift)]==0) {
+                for (int shift=3; shift>=0; shift--) {
+                    if (pos.board[row+shift][col+(3-shift)]==0) {
                         consec = 0;
-                    } else if(pos.board[row+shift][col+(3-shift)] == player) {
+                    } else if (pos.board[row+shift][col+(3-shift)] == player) {
                         consec++;
                     } else {
                         consec = 1;
@@ -177,5 +189,10 @@ public class Engine {
             return 0;
         }
         return netPoints;
+    }
+    public static class ProcessTerminatedException extends Exception {
+        public ProcessTerminatedException() {
+            super("Minimax process was terminated externaly");
+        }
     }
 }
