@@ -36,7 +36,6 @@ public class SettingsPanel extends JPanel {
         target = gp;
         setPreferredSize(new Dimension(370,320));
         setBackground(Color.LIGHT_GRAY);
-        setBorder(new BevelBorder(BevelBorder.LOWERED));
         setLayout(new FlowLayout(FlowLayout.LEFT, 20,20));
 
         pgnLabel = new JTextArea();

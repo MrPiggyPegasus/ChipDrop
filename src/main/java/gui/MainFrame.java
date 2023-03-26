@@ -38,7 +38,7 @@ public class MainFrame extends JFrame{
         setBackground(Color.WHITE);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setSize(760, 370);
+        setSize(760, 350);
         setTitle("ChipDrop");
         setVisible(true);
     }
