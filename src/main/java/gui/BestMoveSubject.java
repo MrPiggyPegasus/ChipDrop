@@ -27,10 +27,10 @@ import connect4.Engine;
 public class BestMoveSubject {
     public int bestMove;
     public GamePanel observer;
-    static Thread findMoveThread;
-    static Board pos;
-    public void findMove(Board pos) {
-        BestMoveSubject.pos = pos;
+    Thread findMoveThread;
+    Board pos;
+    public void findMove() {
+        pos.resetMinimax();
         findMoveThread = new Thread(() -> {
             try {
                 bestMove = pos.bestMove();
@@ -41,16 +41,12 @@ public class BestMoveSubject {
         findMoveThread.interrupt();
     }
 
-    public void subscribe(GamePanel sub) {
+    public BestMoveSubject(GamePanel sub, Board pos) {
+        this.pos = pos;
         observer = sub;
     }
-    @SuppressWarnings("removal") // sorry future me
     public void cancel() {
-        try {
-            if (findMoveThread.isAlive()) {
-                findMoveThread.stop();
-            }
-        } catch (NullPointerException ignored) {}
+        pos.killMinimax();
     }
 
     public void broadcast() {

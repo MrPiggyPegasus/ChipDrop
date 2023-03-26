@@ -103,6 +103,10 @@ public class Board {
         engine.kill();
     }
 
+    public void resetMinimax() {
+        engine.resetKillSwitch();
+    }
+
     public void play(int move) {
         try {
             for (int i=5; i>=0; i--) {

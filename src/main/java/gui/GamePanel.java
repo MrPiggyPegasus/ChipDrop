@@ -35,7 +35,7 @@ public class GamePanel extends JPanel implements MouseListener {
     public BestMoveSubject sub;
 
     public GamePanel() {
-        sub = new BestMoveSubject();
+        sub = new BestMoveSubject(this, pos);
         pos = new Board("");
         findBestMove();
         bestMove = 9;
@@ -54,10 +54,11 @@ public class GamePanel extends JPanel implements MouseListener {
     }
 
     void findBestMove() {
-        sub.cancel();
-        sub = new BestMoveSubject();
-        sub.subscribe(this);
-        sub.findMove(pos);
+        try {
+            sub.cancel();
+        } catch (NullPointerException ignored) {}
+        sub = new BestMoveSubject(this, pos);
+        sub.findMove();
     }
 
     void gameOver() {
@@ -76,7 +77,6 @@ public class GamePanel extends JPanel implements MouseListener {
 
     void playMove(int move) {
         if(!gameOver) {
-            findBestMove();
             pos.play(move);
             SettingsPanel.updatePGN(pos.pgn);
             if (!pos.isInPlay()) {
