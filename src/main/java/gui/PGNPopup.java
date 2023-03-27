@@ -64,6 +64,7 @@ public class PGNPopup extends JFrame {
                 MainFrame.gamePanel.resetToPGN(txt);
                 active = false;
                 dispose();
+		MainFrame.settingsPanel.updatePGN(txt);
             }
         });
         submitButton.setFocusable(false);
