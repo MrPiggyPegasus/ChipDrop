@@ -60,7 +60,7 @@ public class SettingsPanel extends JPanel {
         JButton pgnButton = new JButton("Set PGN");
         pgnButton.setFocusable(false);
         pgnButton.setPreferredSize(new Dimension(100,30));
-        pgnButton.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
+        pgnButton.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
         pgnButton.setBackground(Color.GRAY);
         pgnButton.addActionListener(e -> pgnPopup = new PGNPopup());
         pgnPanel.add(pgnButton);
