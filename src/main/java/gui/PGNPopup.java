@@ -36,18 +36,19 @@ public class PGNPopup extends JFrame {
             dispose();
             return;
         }
+	setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         setTitle("PGN");
-        active = true;
-        setLayout(new FlowLayout(FlowLayout.CENTER, 100,10));
-        setSize(250,200);
+        active = true; 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(MainFrame.gamePanel);
-        setVisible(true);
+        setResizable(false);
+	setVisible(true);
+	setSize(new Dimension(250,250));
 
         JTextArea field = new JTextArea();
         field.setBackground(Color.LIGHT_GRAY);
         field.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
-        field.setSize(new Dimension(150,100));
+        field.setSize(new Dimension(150,130));
         field.setRows(3);
         field.setLineWrap(true);
         field.setBorder(new BevelBorder(BevelBorder.LOWERED));
@@ -56,7 +57,7 @@ public class PGNPopup extends JFrame {
         JButton submitButton = new JButton("OK");
         submitButton.setBackground(Color.LIGHT_GRAY);
         submitButton.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
-        submitButton.setPreferredSize(new Dimension(100,20));
+        submitButton.setPreferredSize(new Dimension(120,20));
         submitButton.addActionListener(e -> {
             String txt = field.getText().replace("\n", "");
             if(Board.isValidPgn(txt)) {
@@ -72,7 +73,7 @@ public class PGNPopup extends JFrame {
         cancelButton.setFocusable(false);
         cancelButton.setBackground(Color.LIGHT_GRAY);
         cancelButton.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
-        cancelButton.setPreferredSize(new Dimension(100,20));
+        cancelButton.setPreferredSize(new Dimension(120,20));
         cancelButton.addActionListener(e -> {
             active = false;
             dispose();
