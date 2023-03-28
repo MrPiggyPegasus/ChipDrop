@@ -2,7 +2,7 @@
 AI Connect 4 bot designed to play like a human, written in Java
 
 ![Lines of code](https://img.shields.io/tokei/lines/github/MrPiggyPegasus/ChipDrop?style=for-the-badge)
-![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/MrPiggyPegasus/ChipDrop)
+![GitHub last commit](https://img.shields.io/github/last-commit/MrPiggyPegasus/ChipDrop?style=for-the-badge)
 
 ## Features
 - Move generation from positions notated by a PGN string (concatenation of moves starting at 0)
