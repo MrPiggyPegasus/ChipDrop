@@ -25,4 +25,4 @@ mvn package
 in the root directory. The compiled jar will appear in /ChipDrop/target/
 
 ### API Support
-- ChipDrop does not currently support integration using an API, but this feature is being developed
+- ChipDrop does not currently support integration using an API, but this feature is being developed.
