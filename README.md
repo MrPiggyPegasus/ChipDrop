@@ -1,7 +1,8 @@
 # ChipDrop
 AI Connect 4 bot designed to play like a human, written in Java
 
-![Lines of code](https://img.shields.io/tokei/lines/github/MrPiggyPegasus/ChipDrop?style=for-the-badge)
+* Warning! ChipDrop is no longer maintained, and a Rust-based rewrite is being worked on.
+
 ![GitHub last commit](https://img.shields.io/github/last-commit/MrPiggyPegasus/ChipDrop?style=for-the-badge)
 
 ## Features
@@ -23,6 +24,3 @@ On any Maven supported system, ChipDrop can be compiled using the command:
 mvn package
 ```
 in the root directory. The compiled jar will appear in /ChipDrop/target/
-
-### API Support
-- ChipDrop does not currently support integration using an API, but this feature is being developed.
