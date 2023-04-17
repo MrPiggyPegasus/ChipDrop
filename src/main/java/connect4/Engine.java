@@ -38,12 +38,12 @@ public class Engine {
         if (pos.situation()!=2)
             return new int[]{sit*1000, 9};
 
-        if (killSwitch) {
+        if (killSwitch) 
             throw new ProcessTerminatedException();
-        }
-        if (depth==0) {
+        
+        if (depth==0) 
             return new int[]{heuristicEval(pos), 9};
-        }
+        
         int maxValue;
         int maxMove = 0;
         if (pos.player==1) { // maximising player
